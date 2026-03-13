@@ -46,6 +46,38 @@ const Appointment = () => {
     },
   });
 
+  const detectLocation = () => {
+  if (!navigator.geolocation) {
+    toast({
+      title: "Location not supported",
+      description: "Your browser does not support location detection"
+    });
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      const googleLink = `https://www.google.com/maps?q=${lat},${lng}`;
+
+      form.setValue("google_maps_link", googleLink);
+
+      toast({
+        title: "Location detected",
+        description: "You can still edit it if needed"
+      });
+    },
+    () => {
+      toast({
+        title: "Location access denied",
+        description: "Please allow location access or paste manually"
+      });
+    }
+  );
+};
+
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
@@ -231,14 +263,42 @@ const Appointment = () => {
                   </FormItem>
                 )} />
 
-                <FormField control={form.control} name="google_maps_link" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> Share Your Google Maps Location</FormLabel>
-                    <FormControl><Input className="placeholder:text-muted-foreground/40" placeholder="Paste your Google Maps location link here" {...field} /></FormControl>
-                    <p className="text-xs text-muted-foreground">Open Google Maps, tap on your location, click Share, and paste the link here.</p>
-                    <FormMessage />
-                  </FormItem>
-                )} />
+                <FormField
+                  control={form.control}
+                  name="google_maps_link"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-1.5">
+                        <MapPin className="h-4 w-4" />
+                        Share Your Location
+                      </FormLabel>
+
+                      <div className="flex gap-2">
+                        <FormControl>
+                          <Input
+                            className="placeholder:text-muted-foreground/40"
+                            placeholder="Paste Google Maps link or use auto detect"
+                            {...field}
+                          />
+                        </FormControl>
+
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={detectLocation}
+                        >
+                          Detect
+                        </Button>
+                      </div>
+
+                      <p className="text-xs text-muted-foreground">
+                        Click "Detect" to auto fill your location or paste a Google Maps link manually.
+                      </p>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField control={form.control} name="problem" render={({ field }) => (
                   <FormItem>

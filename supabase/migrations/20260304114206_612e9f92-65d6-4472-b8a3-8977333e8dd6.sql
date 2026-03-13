@@ -1,0 +1,1 @@
+ALTER TABLE public.appointments ADD COLUMN google_maps_link text NOT NULL DEFAULT '';

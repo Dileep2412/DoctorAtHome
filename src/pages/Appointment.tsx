@@ -1,0 +1,263 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Layout from "@/components/Layout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { CheckCircle, CalendarDays, Stethoscope, MapPin } from "lucide-react";
+import { services } from "@/lib/services-data";
+
+const schema = z.object({
+  patient_name: z.string().trim().min(2, "Name is required").max(100),
+  phone: z.string().trim().min(7, "Valid phone required").max(20),
+  email: z.string().trim().email("Valid email required").max(255),
+  service: z.string().min(1, "Select a service"),
+  date: z.string().min(1, "Select a date"),
+  time: z.string().min(1, "Select a time"),
+  address: z.string().trim().min(5, "Address is required").max(500),
+  google_maps_link: z.string().trim().min(5, "Google Maps location link is required").max(500),
+  problem: z.string().trim().max(1000).optional(),
+});
+
+type FormData = z.infer<typeof schema>;
+
+const timeSlots = [
+  "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
+  "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM",
+];
+
+const Appointment = () => {
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const form = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      patient_name: "", phone: "", email: "", service: "",
+      date: "", time: "", address: "", google_maps_link: "", problem: "",
+    },
+  });
+
+  const onSubmit = async (data: FormData) => {
+    setLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      toast({
+        title: "Login required",
+        description: "Please sign in to book an appointment"
+      });
+
+      window.location.href = "/login";
+      return;
+    }
+
+    const { error } = await supabase.from("appointments").insert({
+
+      user_id: user?.id,
+
+      patient_name: data.patient_name,
+      phone: data.phone,
+      email: data.email,
+      service: data.service,
+      date: data.date,
+      time: data.time,
+      address: data.address,
+      google_maps_link: data.google_maps_link,
+      problem: data.problem || null
+
+    });
+    setLoading(false);
+
+    if (error) {
+      toast({ variant: "destructive", title: "Error", description: "Failed to submit. Please try again." });
+      return;
+    }
+    setSubmitted(true);
+  };
+
+  if (submitted) {
+    return (
+      <Layout>
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="text-center max-w-md mx-auto p-8"
+          >
+            <CheckCircle className="h-16 w-16 text-primary mx-auto mb-6" />
+            <h2 className="font-serif text-3xl font-bold mb-4">Request Received!</h2>
+            <p className="text-muted-foreground">
+              Your appointment request has been received. Our team will assign a doctor and contact you shortly.
+            </p>
+          </motion.div>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      {/* Pricing Section */}
+      <section className="bg-accent/30 py-12 md:py-16">
+        <div className="container mx-auto px-4">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-center mb-8">Transparent Pricing</h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-lg mx-auto bg-card rounded-2xl p-8 shadow-card border border-primary/10"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <Stethoscope className="h-7 w-7 text-primary" />
+              <h3 className="font-serif text-xl font-semibold">Basic Home Visit Fee</h3>
+            </div>
+            <p className="text-4xl md:text-5xl font-bold text-primary mb-6">₹499</p>
+            <ul className="space-y-3 text-muted-foreground mb-6">
+              <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-primary shrink-0" /> No advance payment required</li>
+              <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-primary shrink-0" /> Pay directly to the doctor after service</li>
+              <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-primary shrink-0" /> Cash and UPI accepted</li>
+            </ul>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              "Additional charges (if any) will be informed by the assigned doctor before treatment. We believe in complete transparency."
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="bg-gradient-hero py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="font-serif text-4xl md:text-5xl font-bold text-primary-foreground mb-4">Book an Appointment</h1>
+          <p className="text-primary-foreground/80 max-w-xl mx-auto">
+            Fill in the details below and our team will get back to you promptly.
+          </p>
+        </div>
+      </section>
+
+      <section className="py-16">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-card rounded-2xl p-8 shadow-card"
+          >
+            <div className="flex items-center gap-3 mb-8">
+              <CalendarDays className="h-6 w-6 text-primary" />
+              <h2 className="font-serif text-2xl font-bold">Appointment Details</h2>
+            </div>
+
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <FormField control={form.control} name="patient_name" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Patient Name</FormLabel>
+                      <FormControl><Input className="placeholder:text-muted-foreground/40" placeholder="John Doe" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="phone" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl><Input className="placeholder:text-muted-foreground/40" placeholder="+91 1234 567 890" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
+
+                <FormField control={form.control} name="email" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl><Input className="placeholder:text-muted-foreground/40" type="email" placeholder="john@example.com" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+
+                <FormField control={form.control} name="service" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Select Service</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="data-[placeholder]:text-muted-foreground/40"><SelectValue placeholder="Choose a service" /></SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {services.map((s) => (
+                          <SelectItem key={s.title} value={s.title}>{s.title}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <FormField control={form.control} name="date" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Preferred Date</FormLabel>
+                      <FormControl><Input type="date" min={new Date().toISOString().split('T')[0]} {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="time" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Preferred Time</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="data-[placeholder]:text-muted-foreground/40"><SelectValue placeholder="Select time" /></SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {timeSlots.map((t) => (
+                            <SelectItem key={t} value={t}>{t}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
+
+                <FormField control={form.control} name="address" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address</FormLabel>
+                    <FormControl><Textarea className="placeholder:text-muted-foreground/40" placeholder="Your full address for the home visit" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+
+                <FormField control={form.control} name="google_maps_link" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> Share Your Google Maps Location</FormLabel>
+                    <FormControl><Input className="placeholder:text-muted-foreground/40" placeholder="Paste your Google Maps location link here" {...field} /></FormControl>
+                    <p className="text-xs text-muted-foreground">Open Google Maps, tap on your location, click Share, and paste the link here.</p>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+
+                <FormField control={form.control} name="problem" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Problem Description (Optional)</FormLabel>
+                    <FormControl><Textarea className="placeholder:text-muted-foreground/40" placeholder="Briefly describe your symptoms or health concern" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+
+                <Button type="submit" size="lg" className="w-full font-semibold" disabled={loading}>
+                  {loading ? "Submitting..." : "Submit Appointment Request"}
+                </Button>
+              </form>
+            </Form>
+          </motion.div>
+        </div>
+      </section>
+    </Layout>
+  );
+};
+
+export default Appointment;

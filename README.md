@@ -95,51 +95,6 @@ Supabase handles:
 
 ---
 
-# 📂 Project Structure
-
-DoctorAtHome
-│
-├── public
-│
-├── src
-│ │
-│ ├── assets
-│ │ images and logos
-│ │
-│ ├── components
-│ │ Navbar
-│ │ Footer
-│ │ Layout
-│ │
-│ ├── pages
-│ │ Home
-│ │ Services
-│ │ Doctors
-│ │ Appointment
-│ │ MyAppointments
-│ │ Contact
-│ │ Admin
-│ │
-│ ├── hooks
-│ │
-│ ├── integrations
-│ │ supabase client
-│ │
-│ ├── lib
-│ │
-│ └── main.tsx
-│
-├── supabase
-│ └── migrations
-│
-├── package.json
-├── vite.config.ts
-├── tailwind.config.ts
-└── index.html
-
-
----
-
 # 🗄 Database Schema
 
 # Appointments Table

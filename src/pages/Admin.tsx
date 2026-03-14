@@ -148,7 +148,7 @@ const Admin = () => {
       <div className="min-h-screen flex items-center justify-center bg-secondary">
         <div className="bg-card rounded-2xl p-8 shadow-elevated w-full max-w-md">
           <h1 className="font-serif text-2xl font-bold text-center mb-2">Admin Login</h1>
-          <p className="text-muted-foreground text-center text-sm mb-6">CareNest Administration Panel</p>
+          <p className="text-muted-foreground text-center text-sm mb-6">DoctorAtHome Administration Panel</p>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="text-sm font-medium">Email</label>
@@ -176,7 +176,7 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-secondary">
       <header className="bg-card border-b border-border px-6 py-4 flex items-center justify-between">
-        <h1 className="font-serif text-xl font-bold">CareNest Admin</h1>
+        <h1 className="font-serif text-xl font-bold">DoctorAtHome Admin</h1>
         <Button variant="outline" size="sm" onClick={handleLogout}>
           <LogOut className="h-4 w-4 mr-2" /> Logout
         </Button>

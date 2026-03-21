@@ -18,13 +18,11 @@ import { services } from "@/lib/services-data";
 const schema = z.object({
   patient_name: z.string().trim().min(2, "Name is required").max(100),
   phone: z.string().trim().min(7, "Valid phone required").max(20),
-  email: z.string().trim().email("Valid email required").max(255),
   service: z.string().min(1, "Select a service"),
   date: z.string().min(1, "Select a date"),
   time: z.string().min(1, "Select a time"),
   address: z.string().trim().min(5, "Address is required").max(500),
-  google_maps_link: z.string().trim().min(5, "Google Maps location link is required").max(500),
-  problem: z.string().trim().max(1000).optional(),
+  google_maps_link: z.string().trim().min(5, "Google Maps location link is required").max(500)
 });
 
 type FormData = z.infer<typeof schema>;
@@ -44,8 +42,8 @@ const Appointment = () => {
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      patient_name: "", phone: "", email: "", service: "",
-      date: "", time: "", address: "", google_maps_link: "", problem: "",
+      patient_name: "", phone: "", service: "",
+      date: "", time: "", address: "", google_maps_link: "",
     },
   });
 
@@ -115,18 +113,17 @@ const Appointment = () => {
       return;
     }
 
+  //@ts-ignore
   const { error } = await supabase.from("appointments").insert([
   {
     user_id: user?.id,
     patient_name: data.patient_name,
     phone: data.phone,
-    email: data.email,
     service: data.service,
     date: data.date,
     time: data.time,
     address: data.address,
-    google_maps_link: data.google_maps_link,
-    problem: data.problem || null
+    google_maps_link: data.google_maps_link
   }
   ]);
     setLoading(false);
@@ -226,14 +223,6 @@ const Appointment = () => {
                   )} />
                 </div>
 
-                <FormField control={form.control} name="email" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl><Input className="placeholder:text-muted-foreground/40" type="email" placeholder="john@example.com" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-
                 <FormField control={form.control} name="service" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Select Service</FormLabel>
@@ -321,14 +310,6 @@ const Appointment = () => {
                     </FormItem>
                   )}
                 />
-
-                <FormField control={form.control} name="problem" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Problem Description (Optional)</FormLabel>
-                    <FormControl><Textarea className="placeholder:text-muted-foreground/40" placeholder="Briefly describe your symptoms or health concern" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
 
                 <Button type="submit" size="lg" className="w-full font-semibold" disabled={loading}>
                   {loading ? "Submitting..." : "Submit Appointment Request"}

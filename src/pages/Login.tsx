@@ -12,16 +12,27 @@ export default function Login() {
  const [password,setPassword] = useState("");
  const [loading,setLoading] = useState(false);
 
- useEffect(() => {
-  const checkSession = async () => {
-   const { data } = await supabase.auth.getSession();
-   if(data.session){
-    navigate("/my-appointments");
-   }
-  };
+   useEffect(() => {
+      const checkSession = async () => {
+         const { data } = await supabase.auth.getSession();
 
-  checkSession();
- }, [navigate]);
+         if (data.session) {
+            const redirect = localStorage.getItem("redirect_after_login");
+
+            if (redirect) {
+      navigate(redirect);
+
+      setTimeout(() => {
+         localStorage.removeItem("redirect_after_login");
+         }, 1000);
+         } else {
+               navigate("/my-appointments");
+               }
+            }
+         };
+
+      checkSession();
+   }, [navigate]);
 
  const login = async ()=>{
 
@@ -44,8 +55,15 @@ export default function Login() {
    return;
   }
 
-  navigate("/my-appointments");
- };
+  const redirect = localStorage.getItem("redirect_after_login");
+
+   if (redirect) {
+      localStorage.removeItem("redirect_after_login");
+      navigate(redirect);
+   } else {
+      navigate("/my-appointments");
+   }
+   };
 
  const signup = async ()=>{
 
@@ -69,15 +87,22 @@ export default function Login() {
   }
 
   alert("Account created successfully!");
-  navigate("/my-appointments");
- };
+  const redirect = localStorage.getItem("redirect_after_login");
+
+   if (redirect) {
+      localStorage.removeItem("redirect_after_login");
+      navigate(redirect);
+   } else {
+      navigate("/my-appointments");
+   }
+   };
 
  const signInWithGoogle = async () => {
 
   const { error } = await supabase.auth.signInWithOAuth({
    provider: "google",
    options:{
-    redirectTo: `${window.location.origin}/my-appointments`
+    redirectTo: `${window.location.origin}/login`
    }
   });
 

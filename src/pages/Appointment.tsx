@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -37,7 +38,9 @@ const Appointment = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
+  
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -45,6 +48,20 @@ const Appointment = () => {
       date: "", time: "", address: "", google_maps_link: "", problem: "",
     },
   });
+
+  useEffect(() => {
+    const savedData = localStorage.getItem("appointment_form");
+
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+
+      (Object.keys(parsed) as (keyof FormData)[]).forEach((key) => {
+        form.setValue(key, parsed[key]);
+      });
+
+      localStorage.removeItem("appointment_form");
+    }
+  }, [form]);
 
   const detectLocation = () => {
   if (!navigator.geolocation) {
@@ -83,30 +100,35 @@ const Appointment = () => {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
+      localStorage.setItem("appointment_form", JSON.stringify(data));
+
+      localStorage.setItem("redirect_after_login", "/appointment");
+
       toast({
         title: "Login required",
         description: "Please sign in to book an appointment"
       });
 
-      window.location.href = "/login";
+      setLoading(false); // ✅ FIX
+
+      navigate("/login");
       return;
     }
 
-    const { error } = await supabase.from("appointments").insert({
-
-      user_id: user?.id,
-
-      patient_name: data.patient_name,
-      phone: data.phone,
-      email: data.email,
-      service: data.service,
-      date: data.date,
-      time: data.time,
-      address: data.address,
-      google_maps_link: data.google_maps_link,
-      problem: data.problem || null
-
-    });
+  const { error } = await supabase.from("appointments").insert([
+  {
+    user_id: user?.id,
+    patient_name: data.patient_name,
+    phone: data.phone,
+    email: data.email,
+    service: data.service,
+    date: data.date,
+    time: data.time,
+    address: data.address,
+    google_maps_link: data.google_maps_link,
+    problem: data.problem || null
+  }
+  ]);
     setLoading(false);
 
     if (error) {

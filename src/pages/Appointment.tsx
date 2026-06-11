@@ -157,31 +157,6 @@ const Appointment = () => {
 
   return (
     <Layout>
-      {/* Pricing Section */}
-      <section className="bg-accent/30 py-12 md:py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-center mb-8">Transparent Pricing</h2>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-lg mx-auto bg-card rounded-2xl p-8 shadow-card border border-primary/10"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Stethoscope className="h-7 w-7 text-primary" />
-              <h3 className="font-serif text-xl font-semibold">Basic Home Visit Fee</h3>
-            </div>
-            <p className="text-4xl md:text-5xl font-bold text-primary mb-6">₹499</p>
-            <ul className="space-y-3 text-muted-foreground mb-6">
-              <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-primary shrink-0" /> No advance payment required</li>
-              <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-primary shrink-0" /> Pay directly to the doctor after service</li>
-              <li className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-primary shrink-0" /> Cash and UPI accepted</li>
-            </ul>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              "Additional charges (if any) will be informed by the assigned doctor before treatment. We believe in complete transparency."
-            </p>
-          </motion.div>
-        </div>
-      </section>
 
       <section className="bg-gradient-hero py-16">
         <div className="container mx-auto px-4 text-center">

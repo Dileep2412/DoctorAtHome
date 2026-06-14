@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, CalendarDays, Stethoscope, MapPin } from "lucide-react";
+import { CheckCircle, MapPin, Lock, Phone, Home, MessageCircle } from "lucide-react";
 import { services } from "@/lib/services-data";
 
 const schema = z.object({
@@ -22,7 +22,7 @@ const schema = z.object({
   date: z.string().min(1, "Select a date"),
   time: z.string().min(1, "Select a time"),
   address: z.string().trim().min(5, "Address is required").max(500),
-  google_maps_link: z.string().trim().min(5, "Google Maps location link is required").max(500)
+  google_maps_link: z.string().trim().min(5, "Google Maps location link is required").max(500),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -35,10 +35,10 @@ const timeSlots = [
 const Appointment = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [btnHover, setBtnHover] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -49,49 +49,33 @@ const Appointment = () => {
 
   useEffect(() => {
     const savedData = localStorage.getItem("appointment_form");
-
     if (savedData) {
       const parsed = JSON.parse(savedData);
-
       (Object.keys(parsed) as (keyof FormData)[]).forEach((key) => {
         form.setValue(key, parsed[key]);
       });
-
       localStorage.removeItem("appointment_form");
     }
   }, [form]);
 
   const detectLocation = () => {
-  if (!navigator.geolocation) {
-    toast({
-      title: "Location not supported",
-      description: "Your browser does not support location detection"
-    });
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-
-      const googleLink = `https://www.google.com/maps?q=${lat},${lng}`;
-
-      form.setValue("google_maps_link", googleLink);
-
-      toast({
-        title: "Location detected",
-        description: "You can still edit it if needed"
-      });
-    },
-    () => {
-      toast({
-        title: "Location access denied",
-        description: "Please allow location access or paste manually"
-      });
+    if (!navigator.geolocation) {
+      toast({ title: "Location not supported", description: "Your browser does not support location detection" });
+      return;
     }
-  );
-};
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const googleLink = `https://www.google.com/maps?q=${lat},${lng}`;
+        form.setValue("google_maps_link", googleLink);
+        toast({ title: "Location detected", description: "You can still edit it if needed" });
+      },
+      () => {
+        toast({ title: "Location access denied", description: "Please allow location access or paste manually" });
+      }
+    );
+  };
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
@@ -99,33 +83,26 @@ const Appointment = () => {
 
     if (!user) {
       localStorage.setItem("appointment_form", JSON.stringify(data));
-
       localStorage.setItem("redirect_after_login", "/appointment");
-
-      toast({
-        title: "Login required",
-        description: "Please sign in to book an appointment"
-      });
-
-      setLoading(false); // ✅ FIX
-
+      toast({ title: "Login required", description: "Please sign in to book an appointment" });
+      setLoading(false);
       navigate("/login");
       return;
     }
 
-  //@ts-ignore
-  const { error } = await supabase.from("appointments").insert([
-  {
-    user_id: user?.id,
-    patient_name: data.patient_name,
-    phone: data.phone,
-    service: data.service,
-    date: data.date,
-    time: data.time,
-    address: data.address,
-    google_maps_link: data.google_maps_link
-  }
-  ]);
+    //@ts-ignore
+    const { error } = await supabase.from("appointments").insert([
+      {
+        user_id: user?.id,
+        patient_name: data.patient_name,
+        phone: data.phone,
+        service: data.service,
+        date: data.date,
+        time: data.time,
+        address: data.address,
+        google_maps_link: data.google_maps_link,
+      },
+    ]);
     setLoading(false);
 
     if (error) {
@@ -135,19 +112,137 @@ const Appointment = () => {
     setSubmitted(true);
   };
 
+  // ─── Success ──────────────────────────────────────────────────────────────────
   if (submitted) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center">
+        <style>{`
+          @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.5; }
+            70% { transform: scale(1.4); opacity: 0; }
+            100% { transform: scale(1.4); opacity: 0; }
+          }
+        `}</style>
+        <div style={{ background: "#F0F4F8", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px 16px" }}>
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="text-center max-w-md mx-auto p-8"
+            initial={{ scale: 0.88, opacity: 0, y: 16 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
+            style={{
+              background: "#fff",
+              borderRadius: 24,
+              border: "1px solid #E2E8F0",
+              boxShadow: "0 8px 40px rgba(10,37,88,0.10)",
+              padding: "48px 36px 40px",
+              textAlign: "center",
+              maxWidth: 420,
+              width: "100%",
+            }}
           >
-            <CheckCircle className="h-16 w-16 text-primary mx-auto mb-6" />
-            <h2 className="font-serif text-3xl font-bold mb-4">Request Received!</h2>
-            <p className="text-muted-foreground">
-              Your appointment request has been received. Our team will assign a doctor and contact you shortly.
+            {/* Animated checkmark */}
+            <div style={{ position: "relative", width: 80, height: 80, margin: "0 auto 28px" }}>
+              <div style={{
+                position: "absolute", inset: 0, borderRadius: "50%",
+                background: "#14B8A6", opacity: 0.12,
+                animation: "pulse-ring 2s ease-out infinite",
+              }} />
+              <div style={{
+                width: 80, height: 80, borderRadius: "50%",
+                background: "linear-gradient(135deg, #0A2558, #0EA5E9)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                position: "relative", zIndex: 1,
+              }}>
+                <CheckCircle style={{ color: "#fff", width: 36, height: 36 }} />
+              </div>
+            </div>
+
+            {/* Heading */}
+            <h2 style={{ fontSize: "1.55rem", fontWeight: 800, color: "#0A2558", marginBottom: 8, letterSpacing: "-0.01em" }}>
+              Request Received!
+            </h2>
+            <p style={{ fontSize: 14, color: "#64748B", lineHeight: 1.75, marginBottom: 28 }}>
+              Your appointment has been submitted. Our team will assign a doctor and contact you shortly.
+            </p>
+
+            {/* Info lines with Lucide icons */}
+            <div style={{
+              background: "#F8FAFC", borderRadius: 12, border: "1px solid #E2E8F0",
+              padding: "16px 20px", marginBottom: 24, textAlign: "left",
+              display: "flex", flexDirection: "column", gap: 12,
+            }}>
+              {[
+                { icon: <Phone size={15} color="#0EA5E9" />, text: "Our team will call you within 30 minutes" },
+                { icon: <Home size={15} color="#0EA5E9" />, text: "Doctor will arrive at your scheduled time" },
+              ].map((item, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{
+                    width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                    background: "#EFF6FF", display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    {item.icon}
+                  </div>
+                  <span style={{ fontSize: 13, color: "#475569", fontWeight: 500, lineHeight: 1.5 }}>{item.text}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Buttons */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <button
+                onClick={() => navigate("/my-appointments")}
+                style={{
+                  width: "100%", padding: "13px", background: "#0A2558",
+                  border: "none", borderRadius: 12, color: "#fff",
+                  fontSize: 14, fontWeight: 700, cursor: "pointer",
+                  letterSpacing: "0.02em", fontFamily: "inherit", transition: "background 0.2s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#0d2f6e")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "#0A2558")}
+              >
+                View My Appointments →
+              </button>
+
+              {/* WhatsApp button */}
+              <a
+                href="https://wa.me/919203634407"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  width: "100%", padding: "13px", background: "#25D366",
+                  border: "none", borderRadius: 12, color: "#fff",
+                  fontSize: 14, fontWeight: 700, cursor: "pointer",
+                  fontFamily: "inherit", textDecoration: "none",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  transition: "background 0.2s", boxSizing: "border-box",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#1ebe5d")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "#25D366")}
+              >
+                <MessageCircle size={16} />
+                Chat on WhatsApp
+              </a>
+
+              <button
+                onClick={() => navigate("/")}
+                style={{
+                  width: "100%", padding: "13px", background: "#fff",
+                  border: "1.5px solid #E2E8F0", borderRadius: 12, color: "#64748B",
+                  fontSize: 14, fontWeight: 600, cursor: "pointer",
+                  fontFamily: "inherit", transition: "border-color 0.2s, color 0.2s",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#0EA5E9"; e.currentTarget.style.color = "#0EA5E9"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#E2E8F0"; e.currentTarget.style.color = "#64748B"; }}
+              >
+                Back to Home
+              </button>
+            </div>
+
+            {/* Help note */}
+            <p style={{ fontSize: 12, color: "#B8C4D0", marginTop: 24 }}>
+              Need help? Call us at{" "}
+              <a href="tel:9203634407" style={{ color: "#0EA5E9", fontWeight: 600, textDecoration: "none" }}>
+                9203634407
+              </a>
             </p>
           </motion.div>
         </div>
@@ -157,145 +252,290 @@ const Appointment = () => {
 
   return (
     <Layout>
+      <div style={{ background: "#F0F4F8", minHeight: "100vh", paddingBottom: 64 }}>
 
-      <section className="bg-gradient-hero py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="font-serif text-4xl md:text-5xl font-bold text-primary-foreground mb-4">Book an Appointment</h1>
-          <p className="text-primary-foreground/80 max-w-xl mx-auto">
+        {/* ── Hero ─────────────────────────────────────────────────────────── */}
+        <div style={{
+          background: "#0A2558",
+          padding: "40px 24px 56px",
+          textAlign: "center",
+          position: "relative",
+          overflow: "hidden",
+        }}>
+          <div style={{
+            position: "absolute", bottom: -1, left: 0, right: 0,
+            height: 40, background: "#F0F4F8",
+            borderRadius: "50% 50% 0 0 / 40px 40px 0 0",
+          }} />
+          <p style={{
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "rgba(255,255,255,0.4)",
+            marginBottom: 12, display: "flex", alignItems: "center",
+            justifyContent: "center", gap: 10,
+          }}>
+            <span style={{ display: "inline-block", width: 24, height: 1, background: "rgba(255,255,255,0.2)" }} />
+            Home Healthcare
+            <span style={{ display: "inline-block", width: 24, height: 1, background: "rgba(255,255,255,0.2)" }} />
+          </p>
+          <h1 style={{
+            fontSize: "clamp(1.6rem, 4vw, 2.2rem)", fontWeight: 800,
+            color: "#fff", letterSpacing: "-0.02em", lineHeight: 1.1, marginBottom: 10,
+          }}>
+            Book an <span style={{ color: "#14B8A6" }}>Appointment</span>
+          </h1>
+          <p style={{ fontSize: 13.5, color: "rgba(255,255,255,0.5)", maxWidth: 360, margin: "0 auto", lineHeight: 1.7 }}>
             Fill in the details below and our team will get back to you promptly.
           </p>
         </div>
-      </section>
 
-      <section className="py-16">
-        <div className="container mx-auto px-4 max-w-2xl">
+        {/* ── Form ─────────────────────────────────────────────────────────── */}
+        <div style={{ maxWidth: 560, margin: "0 auto", padding: "8px 16px 0" }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-card rounded-2xl p-8 shadow-card"
+            transition={{ duration: 0.4 }}
+            style={{
+              background: "#fff",
+              borderRadius: 20,
+              border: "1px solid #E2E8F0",
+              boxShadow: "0 2px 24px rgba(10,37,88,0.07)",
+              overflow: "hidden",
+            }}
           >
-            <div className="flex items-center gap-3 mb-8">
-              <CalendarDays className="h-6 w-6 text-primary" />
-              <h2 className="font-serif text-2xl font-bold">Appointment Details</h2>
-            </div>
+            <p style={{
+              fontSize: 10, fontWeight: 700, letterSpacing: "0.12em",
+              textTransform: "uppercase", color: "#94A3B8",
+              padding: "22px 28px 0", marginBottom: 20,
+            }}>
+              Patient information
+            </p>
 
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <FormField control={form.control} name="patient_name" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Patient Name</FormLabel>
-                      <FormControl><Input className="placeholder:text-muted-foreground/40" placeholder="John Doe" {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField control={form.control} name="phone" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl><Input className="placeholder:text-muted-foreground/40" placeholder="+91 1234 567 890" {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                </div>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <div style={{ padding: "0 28px 28px", display: "flex", flexDirection: "column", gap: 18 }}>
 
-                <FormField control={form.control} name="service" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Select Service</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="data-[placeholder]:text-muted-foreground/40"><SelectValue placeholder="Choose a service" /></SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {services.map((s) => (
-                          <SelectItem key={s.title} value={s.title}>{s.title}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )} />
+                  {/* Name + Phone — responsive grid via Tailwind */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField control={form.control} name="patient_name" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel style={labelSt}>Patient name</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="focus-visible:ring-[#0EA5E9] focus-visible:border-[#0EA5E9] placeholder:text-[#C8D4DE]"
+                            style={inputSt}
+                            placeholder="Enter your full name"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="phone" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel style={labelSt}>Phone number</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="focus-visible:ring-[#0EA5E9] focus-visible:border-[#0EA5E9] placeholder:text-[#C8D4DE]"
+                            style={inputSt}
+                            placeholder="Enter your phone number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
 
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <FormField control={form.control} name="date" render={({ field }) => (
+                  {/* Service */}
+                  <FormField control={form.control} name="service" render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Preferred Date</FormLabel>
-                      <FormControl><Input type="date" min={new Date().toISOString().split('T')[0]} {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField control={form.control} name="time" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Preferred Time</FormLabel>
+                      <FormLabel style={labelSt}>Service required</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
-                          <SelectTrigger className="data-[placeholder]:text-muted-foreground/40"><SelectValue placeholder="Select time" /></SelectTrigger>
+                          <SelectTrigger
+                            style={inputSt}
+                            className="focus:ring-[#0EA5E9] focus:border-[#0EA5E9] data-[placeholder]:text-[#C8D4DE]"
+                          >
+                            <SelectValue placeholder="Select a service" />
+                          </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {timeSlots.map((t) => (
-                            <SelectItem key={t} value={t}>{t}</SelectItem>
+                          {services.map((s) => (
+                            <SelectItem key={s.title} value={s.title}>{s.title}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )} />
-                </div>
 
-                <FormField control={form.control} name="address" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl><Textarea className="placeholder:text-muted-foreground/40" placeholder="Your full address for the home visit" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-
-                <FormField
-                  control={form.control}
-                  name="google_maps_link"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1.5">
-                        <MapPin className="h-4 w-4" />
-                        Share Your Location
-                      </FormLabel>
-
-                      <div className="flex gap-2">
+                  {/* Date + Time — responsive grid via Tailwind */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField control={form.control} name="date" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel style={labelSt}>Preferred date</FormLabel>
                         <FormControl>
                           <Input
-                            className="placeholder:text-muted-foreground/40"
-                            placeholder="Paste Google Maps link or use auto detect"
+                            type="date"
+                            min={new Date().toISOString().split("T")[0]}
+                            className="focus-visible:ring-[#0EA5E9] focus-visible:border-[#0EA5E9]"
+                            style={inputSt}
                             {...field}
                           />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="time" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel style={labelSt}>Preferred time</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger
+                              style={inputSt}
+                              className="focus:ring-[#0EA5E9] focus:border-[#0EA5E9] data-[placeholder]:text-[#C8D4DE]"
+                            >
+                              <SelectValue placeholder="Select a time slot" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {timeSlots.map((t) => (
+                              <SelectItem key={t} value={t}>{t}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
 
+                  {/* Address */}
+                  <FormField control={form.control} name="address" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel style={labelSt}>Home address</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          className="focus-visible:ring-[#0EA5E9] focus-visible:border-[#0EA5E9] placeholder:text-[#C8D4DE]"
+                          style={{ ...inputSt, minHeight: 76, resize: "none", lineHeight: 1.6 }}
+                          placeholder="Enter your complete address for the home visit"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  {/* Divider */}
+                  <div style={{ height: 1, background: "#F1F5F9" }} />
+
+                  {/* Location */}
+                  <FormField control={form.control} name="google_maps_link" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel style={{ ...labelSt, display: "flex", alignItems: "center", gap: 5 }}>
+                        <MapPin size={12} color="#0EA5E9" />
+                        Share your location
+                      </FormLabel>
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <FormControl>
+                          <Input
+                            className="flex-1 focus-visible:ring-[#0EA5E9] focus-visible:border-[#0EA5E9] placeholder:text-[#C8D4DE]"
+                            style={inputSt}
+                            placeholder="Paste your Google Maps link here"
+                            {...field}
+                          />
+                        </FormControl>
                         <Button
                           type="button"
                           variant="outline"
                           onClick={detectLocation}
+                          className="hover:bg-[#E0F2FE] shrink-0"
+                          style={{
+                            background: "#F0F9FF",
+                            border: "1.5px solid #BAE6FD",
+                            borderRadius: 10,
+                            color: "#0EA5E9",
+                            fontSize: 12,
+                            fontWeight: 700,
+                            whiteSpace: "nowrap",
+                            transition: "background 0.15s",
+                          }}
                         >
-                          Detect
+                          Auto Detect
                         </Button>
                       </div>
-
-                      <p className="text-xs text-muted-foreground">
-                        Click "Detect" to auto fill your location or paste a Google Maps link manually.
+                      <p style={{ fontSize: 11.5, color: "#C8D4DE", marginTop: 4 }}>
+                        Or click Auto Detect to share your live location
                       </p>
-
                       <FormMessage />
                     </FormItem>
-                  )}
-                />
+                  )} />
 
-                <Button type="submit" size="lg" className="w-full font-semibold" disabled={loading}>
-                  {loading ? "Submitting..." : "Submit Appointment Request"}
-                </Button>
+                </div>
+
+                {/* Submit Button */}
+                <div style={{ padding: "0 28px 28px" }}>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    onMouseEnter={() => setBtnHover(true)}
+                    onMouseLeave={() => setBtnHover(false)}
+                    style={{
+                      width: "100%",
+                      padding: "15px",
+                      background: btnHover ? "#0d2f6e" : "#0A2558",
+                      border: "none",
+                      borderRadius: 12,
+                      color: "#fff",
+                      fontSize: 15,
+                      fontWeight: 700,
+                      cursor: loading ? "not-allowed" : "pointer",
+                      letterSpacing: "0.02em",
+                      transition: "background 0.2s, transform 0.15s, box-shadow 0.15s",
+                      transform: btnHover ? "translateY(-2px)" : "translateY(0)",
+                      boxShadow: btnHover
+                        ? "0 8px 24px rgba(10,37,88,0.28)"
+                        : "0 2px 8px rgba(10,37,88,0.12)",
+                      opacity: loading ? 0.7 : 1,
+                      fontFamily: "inherit",
+                    }}
+                  >
+                    {loading ? "Submitting..." : "Submit Appointment Request →"}
+                  </button>
+                  <div style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    gap: 6, marginTop: 12,
+                  }}>
+                    <Lock size={11} color="#B8C4D0" />
+                    <span style={{ fontSize: 11.5, color: "#B8C4D0" }}>
+                      Your information is 100% secure and encrypted
+                    </span>
+                  </div>
+                </div>
+
               </form>
             </Form>
           </motion.div>
         </div>
-      </section>
+
+      </div>
     </Layout>
   );
+};
+
+const labelSt: React.CSSProperties = {
+  fontSize: 12,
+  fontWeight: 600,
+  color: "#334155",
+  letterSpacing: "0.01em",
+};
+
+const inputSt: React.CSSProperties = {
+  padding: "12px 15px",
+  border: "1.5px solid #E2E8F0",
+  borderRadius: 10,
+  fontSize: 14,
+  color: "#1E293B",
+  background: "#FAFBFC",
 };
 
 export default Appointment;

@@ -1,95 +1,385 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Shield, Clock, Home, Star, Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import {
+  ArrowRight, Shield, Clock, Home, Star, Phone,
+  CheckCircle, Zap, Heart, Users, MessageCircle,
+  Stethoscope, UserRound, Dumbbell, Microscope,
+  CalendarDays, PhoneCall, ClipboardList,
+} from "lucide-react";
 import Layout from "@/components/Layout";
-import heroImage from "@/assets/hero-homecare.jpg";
-import { services } from "@/lib/services-data";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+
+import doctorImg from "@/assets/hero-section.jpg";
+import gallery1 from "@/assets/gallery1.png";
+import gallery2 from "@/assets/gallery2.png";
+import gallery3 from "@/assets/gallery3.png";
+import gallery4 from "@/assets/gallery4.png";
+import gallery5 from "@/assets/gallery5.png";
+import gallery6 from "@/assets/gallery6.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5 } }),
+  visible: (i: number) => ({
+    opacity: 1, y: 0,
+    transition: { delay: i * 0.1, duration: 0.55, ease: "easeOut" },
+  }),
 };
 
 const testimonials = [
-  {
-    name: "Rohit Sharma",
-    text: "CareNest arranged a doctor visit for my father at home. The service was very professional and the doctor explained everything clearly. It saved us a lot of time and hassle.",
-    rating: 5
-  },
-  {
-    name: "Anjali Verma",
-    text: "The physiotherapy sessions at home were extremely helpful after my knee surgery. The therapist was punctual, patient, and very knowledgeable. Highly recommended service.",
-    rating: 5
-  },
-  {
-    name: "Priya Mehta",
-    text: "Booking a home visit for my mother was very easy. The doctor was kind and attentive, and the entire process from appointment to treatment was smooth.",
-    rating: 5
-  }
+  { name: "Pushpa Singh",   location: "Bhopal", text: "Mera beta subah se bahut beemar tha aur lagatar vomiting ho rahi thi. Doctor At Home ki team ne turant response diya. Doctor ghar aaye aur proper treatment diya. Kuch hi samay me uski tabiyat me kaafi sudhaar aa gaya.", rating: 5 },
+  { name: "Gaurav Singh",   location: "Bhopal", text: "I had an excellent experience with Doctor At Home. The doctors were professional, punctual, and explained everything clearly. The entire process was smooth and hassle-free.", rating: 5 },
+  { name: "Subham Yadav",   location: "Bhopal", text: "Mere pitaji ko achanak saans lene me dikkat hone lagi thi. Doctor turant ghar aaye aur emergency oxygen support diya. Team ki quick response ne hume bahut confidence diya.", rating: 5 },
+  { name: "Vivek Gupta",    location: "Bhopal", text: "Doctor At Home ki service bahut reliable hai. Doctor ne time par visit kiya aur patient ko proper time diya. Staff ka behaviour bhi bahut polite aur professional tha.", rating: 5 },
+  { name: "Shivangi Rawat", location: "Bhopal", text: "Doctor At Home provides exceptional healthcare services. The doctor treated me with great care and patience. The treatment was effective and all my concerns were addressed properly.", rating: 5 },
+  { name: "Anita Verma",    location: "Bhopal", text: "Meri maa ki umar zyada hai aur unhe baar-baar hospital le jana mushkil tha. Doctor At Home ki Elder Care service ne hamari bahut help ki. Doctors aur staff dono experienced hain.", rating: 5 },
+  { name: "Rahul Sharma",   location: "Bhopal", text: "Doctor ghar par time se aaye aur pura checkup bahut patiently kiya. Hume hospital jaane ki zarurat nahi padi. Overall experience bahut smooth raha.", rating: 5 },
+  { name: "Priya Mehta",    location: "Bhopal", text: "Booking process bahut simple tha aur team ne jaldi response diya. Doctor bahut polite the aur meri maa ko ghar par hi proper treatment mila.", rating: 5 },
+  { name: "Neha Patel",     location: "Bhopal", text: "Lab test booking ghar baithe ho gayi aur sample collection bhi time par hua. Reports jaldi mil gayi aur pura process bahut convenient raha.", rating: 5 },
+  { name: "Suresh Tiwari",  location: "Bhopal", text: "Emergency situation me Doctor At Home ne bahut jaldi response diya. Team experienced hai aur patient ki condition ko calmly handle karti hai.", rating: 5 },
 ];
 
 const whyUs = [
-  { icon: Home, title: "Care at Your Doorstep", desc: "No need to travel. Our doctors come to you for a comfortable healing experience." },
-  { icon: Shield, title: "Certified Professionals", desc: "All our doctors are board-certified with years of homecare experience." },
-  { icon: Clock, title: "24/7 Availability", desc: "Round-the-clock support. Emergency services available anytime you need them." },
+  { icon: Users,  title: "Experienced Doctors",  desc: "Board-certified doctors with years of home visit expertise.", badge: "Verified",    stat: "Certified doctors",  glowColor: "#3b82f6", iconBg: "rgba(59,130,246,0.1)",  iconColor: "#2563eb", badgeBg: "rgba(59,130,246,0.08)",  badgeColor: "#1d4ed8", badgeBorder: "rgba(59,130,246,0.2)"  },
+  { icon: Clock,  title: "24/7 Availability",    desc: "Round-the-clock support and emergency services, anytime.",  badge: "Always On",  stat: "Never closed",       glowColor: "#14b8a6", iconBg: "rgba(20,184,166,0.1)",  iconColor: "#0d9488", badgeBg: "rgba(20,184,166,0.08)",  badgeColor: "#0f766e", badgeBorder: "rgba(20,184,166,0.2)"  },
+  { icon: Zap,    title: "Fast Response",         desc: "Doctor at your doorstep within 2 hours of booking.",       badge: "Fast",       stat: "2hr guarantee",      glowColor: "#f97316", iconBg: "rgba(249,115,22,0.1)",  iconColor: "#ea580c", badgeBg: "rgba(249,115,22,0.08)",  badgeColor: "#c2410c", badgeBorder: "rgba(249,115,22,0.2)"  },
+  { icon: Heart,  title: "Affordable Care",       desc: "Transparent pricing with zero hidden charges.",             badge: "Affordable", stat: "No hidden fees",     glowColor: "#ec4899", iconBg: "rgba(236,72,153,0.1)",  iconColor: "#db2777", badgeBg: "rgba(236,72,153,0.08)",  badgeColor: "#be185d", badgeBorder: "rgba(236,72,153,0.2)"  },
+  { icon: Home,   title: "Home Comfort",          desc: "Recover stress-free in your own comfortable space.",        badge: "At Home",    stat: "Zero travel stress", glowColor: "#8b5cf6", iconBg: "rgba(139,92,246,0.1)", iconColor: "#7c3aed", badgeBg: "rgba(139,92,246,0.08)",  badgeColor: "#6d28d9", badgeBorder: "rgba(139,92,246,0.2)"  },
+  { icon: Shield, title: "Trusted by Families",   desc: "Thousands of families in Bhopal rely on us daily.",        badge: "Trusted",    stat: "5★ rated service",   glowColor: "#10b981", iconBg: "rgba(16,185,129,0.1)", iconColor: "#059669", badgeBg: "rgba(16,185,129,0.08)",  badgeColor: "#047857", badgeBorder: "rgba(16,185,129,0.2)"  },
 ];
+
+const previewServices = [
+  { title: "Doctor Home Visit", desc: "Certified doctors at your doorstep for consultation & treatment.",       icon: Stethoscope, gradient: "from-blue-500 to-indigo-600",   iconBg: "bg-blue-500"    },
+  { title: "Elder Care",        desc: "Dedicated care for senior citizens with regular health monitoring.",      icon: UserRound,   gradient: "from-purple-500 to-purple-700", iconBg: "bg-purple-500"  },
+  { title: "Physiotherapy",     desc: "Expert physiotherapy sessions for recovery and pain relief.",            icon: Dumbbell,    gradient: "from-orange-400 to-orange-600", iconBg: "bg-orange-500"  },
+  { title: "Lab Tests at Home", desc: "Sample collection at your doorstep with fast, accurate results.",       icon: Microscope,  gradient: "from-[#14B8A6] to-teal-600",   iconBg: "bg-[#14B8A6]"  },
+];
+
+const howItWorks = [
+  {
+    step: 1,
+    icon: CalendarDays,
+    title: "Book an Appointment",
+    desc: "Fill out the appointment form on our website, or contact us via call or WhatsApp.",
+    color: "#0EA5E9",
+    bg: "rgba(14,165,233,0.08)",
+  },
+  {
+    step: 2,
+    icon: PhoneCall,
+    title: "We Confirm Your Request",
+    desc: "Our team reviews your request and contacts you to confirm the appointment details.",
+    color: "#8B5CF6",
+    bg: "rgba(139,92,246,0.08)",
+  },
+  {
+    step: 3,
+    icon: Stethoscope,
+    title: "Healthcare Professional Visits",
+    desc: "A qualified doctor, nurse, or physiotherapist visits your home at the scheduled time.",
+    color: "#14B8A6",
+    bg: "rgba(20,184,166,0.08)",
+  },
+  {
+    step: 4,
+    icon: ClipboardList,
+    title: "Get Treatment & Reports",
+    desc: "Receive quality healthcare at home along with prescriptions, reports, and follow-up support.",
+    color: "#10B981",
+    bg: "rgba(16,185,129,0.08)",
+  },
+];
+
+/* ── Floating card component ── */
+const FloatCard = ({
+  icon, iconBg, title, sub, barColor, style,
+}: {
+  icon: React.ReactNode;
+  iconBg: string;
+  title: string;
+  sub: string;
+  barColor?: string;
+  style?: React.CSSProperties;
+}) => (
+  <motion.div
+    initial={{ opacity: 0, y: 14, scale: 0.9 }}
+    animate={{ opacity: 1, y: 0, scale: 1 }}
+    transition={{ delay: 0.75, duration: 0.55, ease: "easeOut" }}
+    className="absolute flex items-center gap-3 rounded-2xl px-4 py-3 border border-white/80"
+    style={{
+      background: "rgba(255,255,255,0.96)",
+      backdropFilter: "blur(12px)",
+      boxShadow: "0 8px 32px rgba(10,37,88,0.16)",
+      minWidth: 168,
+      ...style,
+    }}
+  >
+    <div
+      className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+      style={{ background: iconBg }}
+    >
+      {icon}
+    </div>
+    <div className="flex-1 min-w-0">
+      <p className="text-[12.5px] font-extrabold text-[#0A2558] leading-tight">{title}</p>
+      <p className="text-[11px] text-slate-400 mt-0.5">{sub}</p>
+      {barColor && (
+        <div
+          className="h-[3px] rounded-full mt-1.5 w-3/5"
+          style={{ background: barColor }}
+        />
+      )}
+    </div>
+  </motion.div>
+);
 
 const Index = () => {
   return (
     <Layout>
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img src={heroImage} alt="Caring nurse visiting patient at home" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-foreground/60" />
+
+      {/* ══ HERO ══ */}
+      <section
+        className="relative min-h-[96vh] flex items-center overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #071B45 0%, #0A2558 52%, #103B85 100%)" }}
+      >
+        {/* Background glows */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div
+            className="absolute w-[680px] h-[680px] rounded-full opacity-[0.13] blur-3xl"
+            style={{ background: "radial-gradient(circle, #14B8A6, transparent)", top: "-200px", right: "-140px" }}
+          />
+          <div
+            className="absolute w-[420px] h-[420px] rounded-full opacity-[0.09] blur-3xl"
+            style={{ background: "radial-gradient(circle, #38bdf8, transparent)", bottom: "-110px", left: "-100px" }}
+          />
         </div>
-        <div className="relative container mx-auto px-4 py-24 md:py-36">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            className="max-w-2xl"
-          >
-            <motion.h1 variants={fadeUp} custom={0} className="font-serif text-4xl md:text-6xl font-bold text-primary-foreground leading-tight mb-6">
-              Professional Healthcare,{" "}
-              <span className="text-accent">Right at Home</span>
-            </motion.h1>
-            <motion.p variants={fadeUp} custom={1} className="text-lg md:text-xl text-primary-foreground/80 mb-8 max-w-lg">
-              CareNest brings certified doctors, nurses, and therapists to your doorstep. Experience compassionate, personalized homecare services.
-            </motion.p>
-            <motion.div variants={fadeUp} custom={2} className="flex flex-wrap gap-4">
-              <Link to="/appointment">
-                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
-                  Book Appointment <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <a href="tel:+919203634407">
-  <Button
-    size="lg"
-    variant="outline"
-    className="border-white text-white bg-transparent hover:bg-white hover:text-primary transition-colors opacity-100"
-  >
-    <Phone className="mr-2 h-4 w-4" />
-    Call Now
-  </Button>
-</a>
-            </motion.div>
-          </motion.div>
+
+        {/* Grid pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.025]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.2) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.2) 1px,transparent 1px)",
+            backgroundSize: "56px 56px",
+          }}
+        />
+
+        <div className="w-full max-w-[1280px] mx-auto px-6 md:px-10 py-20 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+
+            {/* LEFT */}
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: -16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white/80 text-xs font-bold mb-7 uppercase tracking-widest backdrop-blur-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#14B8A6] animate-pulse" />
+                  Bhopal's Trusted Home Healthcare
+                </span>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 28 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.7 }}
+                className="text-4xl sm:text-5xl lg:text-[3.6rem] font-extrabold text-white leading-[1.1] tracking-tight mb-5"
+              >
+                Expert Healthcare,{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#14B8A6] to-[#38bdf8]">
+                  Delivered To
+                  <br className="hidden sm:block" />
+                  Your Home.
+                </span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                className="text-white/60 text-base md:text-lg leading-relaxed mb-9 max-w-lg"
+              >
+                Trusted doctors, nursing care, physiotherapy and diagnostics — delivered safely
+                and conveniently at your home across{" "}
+                <span className="text-[#14B8A6] font-semibold">Bhopal.</span>
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.44, duration: 0.55 }}
+                className="flex flex-wrap gap-3 mb-8"
+              >
+                <Link to="/appointment">
+                  <button className="inline-flex items-center gap-2 bg-[#14B8A6] hover:bg-[#0f9d93] text-white font-bold px-7 py-3.5 rounded-xl shadow-lg shadow-[#14B8A6]/30 hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 text-sm">
+                    📅 Book Appointment <ArrowRight className="h-4 w-4" />
+                  </button>
+                </Link>
+                <a href="tel:+919203634407">
+                  <button className="inline-flex items-center gap-2 border-2 border-white/25 text-white font-bold px-7 py-3.5 rounded-xl hover:bg-white hover:text-[#0A2558] hover:border-white transition-all duration-200 text-sm backdrop-blur-sm">
+                    <Phone className="h-4 w-4" /> Call Now
+                  </button>
+                </a>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.58, duration: 0.55 }}
+                className="flex flex-wrap gap-2"
+              >
+                {["Experienced Doctors", "Home Visits", "24×7 Support"].map((pill) => (
+                  <div
+                    key={pill}
+                    className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md border border-white/15 px-3.5 py-2 rounded-full text-white/80 text-xs font-semibold"
+                  >
+                    <CheckCircle className="h-3.5 w-3.5 text-[#14B8A6]" />
+                    {pill}
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* RIGHT — doctor image circle + 3 floating cards */}
+            <div className="relative hidden lg:flex items-center justify-center min-h-[520px]">
+              {/* Aura ring behind circle */}
+              <div
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  width: "480px",
+                  height: "480px",
+                  background:
+                    "radial-gradient(circle, rgba(20,184,166,0.1) 0%, rgba(10,37,88,0.45) 55%, transparent 100%)",
+                  border: "1px solid rgba(20,184,166,0.2)",
+                }}
+              />
+
+              {/* Doctor image in circle */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.88 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.28, duration: 0.8, ease: "easeOut" }}
+                className="relative z-10 rounded-full overflow-hidden border-2 border-[#14B8A6]/30 shadow-2xl flex-shrink-0"
+                style={{ width: "430px", height: "430px" }}
+              >
+                <img
+                  src={doctorImg}
+                  alt="Doctor visiting patient at home"
+                  className="w-full h-full object-cover object-top"
+                />
+                {/* subtle dark overlay at bottom for depth */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(to top, rgba(10,37,88,0.35) 0%, transparent 50%)",
+                  }}
+                />
+              </motion.div>
+
+              {/* Float card 1 — Rating (top right) */}
+              <FloatCard
+                icon={<Star className="h-5 w-5 fill-amber-400 text-amber-400" />}
+                iconBg="#FEF3C7"
+                title="4.9 Rating"
+                sub="5000+ Happy Patients"
+                barColor="linear-gradient(90deg,#F59E0B,#FCD34D)"
+                style={{ top: "32px", right: "-10px", zIndex: 20 }}
+              />
+
+              {/* Float card 2 — Doctor Available (middle right) */}
+              <FloatCard
+                icon={<Stethoscope className="h-5 w-5 text-[#14B8A6]" />}
+                iconBg="#E0FDF4"
+                title="Doctor Available"
+                sub="24×7 Emergency Care"
+                barColor="linear-gradient(90deg,#14B8A6,#38bdf8)"
+                style={{ top: "50%", right: "-32px", transform: "translateY(-50%)", zIndex: 20 }}
+              />
+
+              {/* Float card 3 — Within 2 Hours (bottom right) */}
+              <FloatCard
+                icon={<Clock className="h-5 w-5 text-indigo-500" />}
+                iconBg="#EEF2FF"
+                title="Within 2 Hours"
+                sub="At Your Doorstep"
+                barColor="linear-gradient(90deg,#6366F1,#A78BFA)"
+                style={{ bottom: "64px", right: "-8px", zIndex: 20 }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Wave divider — smooth transition to next section */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 54" className="w-full" preserveAspectRatio="none">
+            <path d="M0,27 C360,54 1080,0 1440,27 L1440,54 L0,54 Z" fill="#e8f4fd" />
+          </svg>
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="py-20 bg-secondary">
-        <div className="container mx-auto px-4">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
-            <motion.h2 variants={fadeUp} custom={0} className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Why Choose CareNest?
+      {/* ── WHY CHOOSE US ── */}
+      <section
+        className="py-24 relative overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(135deg, #e8f4fd 0%, #f0f0ff 35%, #e6faf5 70%, #fce8f8 100%)",
+        }}
+      >
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div
+            className="absolute w-[500px] h-[500px] rounded-full blur-3xl opacity-40"
+            style={{
+              background: "radial-gradient(circle, rgba(20,184,166,0.22), transparent 70%)",
+              top: "-120px",
+              right: "-100px",
+            }}
+          />
+          <div
+            className="absolute w-[400px] h-[400px] rounded-full blur-3xl opacity-40"
+            style={{
+              background: "radial-gradient(circle, rgba(139,92,246,0.18), transparent 70%)",
+              bottom: "-100px",
+              left: "-80px",
+            }}
+          />
+        </div>
+
+        <div className="w-full max-w-[1280px] mx-auto px-6 md:px-8 relative z-10">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="text-center mb-14"
+          >
+            <motion.p
+              variants={fadeUp}
+              custom={0}
+              className="text-[#14B8A6] font-bold uppercase tracking-[0.2em] text-sm mb-3"
+            >
+              Why Choose Us
+            </motion.p>
+            <motion.h2
+              variants={fadeUp}
+              custom={1}
+              className="text-4xl md:text-5xl font-extrabold text-[#0A2558] mb-4"
+            >
+              Why Choose DoctorAtHome?
             </motion.h2>
-            <motion.p variants={fadeUp} custom={1} className="text-muted-foreground max-w-xl mx-auto">
-              We combine medical expertise with genuine compassion to deliver healthcare that feels like family.
+            <motion.p
+              variants={fadeUp}
+              custom={2}
+              className="text-slate-500 max-w-xl mx-auto text-lg"
+            >
+              Medical expertise meets genuine compassion — healthcare that truly feels like family.
             </motion.p>
           </motion.div>
-          <div className="grid md:grid-cols-3 gap-8">
+
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
             {whyUs.map((item, i) => (
               <motion.div
                 key={item.title}
@@ -98,28 +388,171 @@ const Index = () => {
                 viewport={{ once: true }}
                 custom={i}
                 variants={fadeUp}
-                className="bg-card rounded-xl p-8 shadow-card text-center"
+                whileHover={{ y: -6 }}
+                className="relative rounded-[22px] p-5 md:p-6 overflow-hidden transition-all duration-300 hover:shadow-2xl"
+                style={{
+                  background: "rgba(255,255,255,0.55)",
+                  backdropFilter: "blur(18px)",
+                  WebkitBackdropFilter: "blur(18px)",
+                  border: "1px solid rgba(255,255,255,0.78)",
+                }}
               >
-                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
-                  <item.icon className="h-7 w-7 text-primary" />
+                <div
+                  className="absolute -top-10 -right-8 w-[130px] h-[130px] rounded-full pointer-events-none opacity-25"
+                  style={{ background: `radial-gradient(circle, ${item.glowColor}, transparent)` }}
+                />
+                <div className="flex items-center gap-2 mb-4">
+                  <div
+                    className="w-10 h-10 rounded-[11px] flex items-center justify-center flex-shrink-0"
+                    style={{ background: item.iconBg }}
+                  >
+                    <item.icon className="h-5 w-5" style={{ color: item.iconColor }} />
+                  </div>
+                  <span
+                    className="text-[10px] font-bold px-2.5 py-1 rounded-full border"
+                    style={{
+                      background: item.badgeBg,
+                      color: item.badgeColor,
+                      borderColor: item.badgeBorder,
+                    }}
+                  >
+                    {item.badge}
+                  </span>
                 </div>
-                <h3 className="font-serif text-xl font-semibold mb-3">{item.title}</h3>
-                <p className="text-muted-foreground text-sm">{item.desc}</p>
+                <h3 className="font-extrabold text-[#0A2558] text-base md:text-lg mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-slate-500 text-sm md:text-base leading-relaxed">{item.desc}</p>
+                <div className="flex items-center gap-1.5 mt-4 pt-3 border-t border-[#0A2558]/[0.07]">
+                  <CheckCircle className="h-3.5 w-3.5 flex-shrink-0" style={{ color: item.iconColor }} />
+                  <span className="text-[11px] font-bold" style={{ color: item.iconColor }}>
+                    {item.stat}
+                  </span>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Services Preview */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">Our Services</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">Comprehensive homecare services tailored to your needs.</p>
+      {/* ── HOW IT WORKS ── */}
+      <section className="py-24 bg-white">
+        <div className="w-full max-w-[1280px] mx-auto px-6 md:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <motion.p
+              variants={fadeUp}
+              custom={0}
+              className="text-[#14B8A6] font-bold uppercase tracking-[0.2em] text-sm mb-3"
+            >
+              Simple Process
+            </motion.p>
+            <motion.h2
+              variants={fadeUp}
+              custom={1}
+              className="text-4xl md:text-5xl font-extrabold text-[#0A2558] mb-4"
+            >
+              How DoctorAtHome Works
+            </motion.h2>
+            <motion.p
+              variants={fadeUp}
+              custom={2}
+              className="text-slate-500 max-w-xl mx-auto text-lg"
+            >
+              Quality healthcare delivered to your doorstep in just 4 simple steps
+            </motion.p>
+            <div className="flex items-center justify-center gap-1 mt-4">
+              <div className="w-8 h-0.5 rounded-full bg-[#14B8A6]" />
+              <div className="w-2 h-2 rounded-full bg-[#14B8A6]" />
+              <div className="w-8 h-0.5 rounded-full bg-[#14B8A6]" />
+            </div>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+            {howItWorks.map((step, i) => (
+              <div key={step.step} className="relative flex flex-col items-center">
+                {i < howItWorks.length - 1 && (
+                  <div className="hidden lg:flex absolute top-[52px] left-[calc(50%+52px)] right-[calc(-50%+52px)] items-center z-10">
+                    <div className="flex-1 border-t-2 border-dashed border-slate-200" />
+                    <ArrowRight className="h-4 w-4 text-slate-300 -ml-1 flex-shrink-0" />
+                  </div>
+                )}
+                <motion.div
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  custom={i}
+                  variants={fadeUp}
+                  className="w-full flex flex-col items-center text-center"
+                >
+                  <div className="relative mb-5">
+                    <div
+                      className="w-24 h-24 rounded-full flex items-center justify-center shadow-lg"
+                      style={{ background: step.bg, border: `2px solid ${step.color}20` }}
+                    >
+                      <step.icon className="h-10 w-10" style={{ color: step.color }} />
+                    </div>
+                    <div
+                      className="absolute -top-1 -left-1 w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-extrabold shadow-md"
+                      style={{ background: step.color }}
+                    >
+                      {step.step}
+                    </div>
+                  </div>
+                  <div
+                    className="w-full rounded-2xl p-5 border transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                    style={{
+                      background: "#F8FAFC",
+                      borderColor: `${step.color}20`,
+                      borderTopColor: step.color,
+                      borderTopWidth: 3,
+                    }}
+                  >
+                    <h3 className="font-extrabold text-[#0A2558] text-base mb-2">{step.title}</h3>
+                    <div className="w-8 h-0.5 rounded-full mx-auto mb-3" style={{ background: step.color }} />
+                    <p className="text-slate-500 text-sm leading-relaxed">{step.desc}</p>
+                  </div>
+                </motion.div>
+              </div>
+            ))}
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {services.slice(0, 4).map((s, i) => (
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="text-center mt-12"
+          >
+            <Link to="/appointment">
+              <button className="inline-flex items-center gap-2 bg-[#14B8A6] hover:bg-[#0f9d93] text-white font-bold px-8 py-3.5 rounded-xl shadow-lg shadow-[#14B8A6]/25 hover:scale-105 active:scale-95 transition-all duration-200">
+                Book Your Appointment Now <ArrowRight className="h-4 w-4" />
+              </button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── SERVICES PREVIEW ── */}
+      <section className="py-24" style={{ background: "#F1F5F9" }}>
+        <div className="w-full max-w-[1280px] mx-auto px-6 md:px-8">
+          <div className="text-center mb-14">
+            <p className="text-[#14B8A6] font-bold uppercase tracking-[0.2em] text-sm mb-3">
+              What We Offer
+            </p>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[#0A2558] mb-4">
+              Our Services
+            </h2>
+            <p className="text-slate-500 max-w-xl mx-auto text-lg">
+              Comprehensive homecare services tailored to your needs.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+            {previewServices.map((s, i) => (
               <motion.div
                 key={s.title}
                 initial="hidden"
@@ -127,75 +560,210 @@ const Index = () => {
                 viewport={{ once: true }}
                 custom={i}
                 variants={fadeUp}
-                className="bg-card rounded-xl p-6 shadow-soft hover:shadow-card transition-shadow group"
+                whileHover={{ y: -8 }}
+                className="group relative bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <s.icon className="h-6 w-6 text-primary" />
+                <div
+                  className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${s.gradient} rounded-t-3xl`}
+                />
+                <div
+                  className={`absolute -top-6 -right-6 w-20 h-20 rounded-full bg-gradient-to-br ${s.gradient} opacity-[0.08]`}
+                />
+                <div
+                  className={`w-14 h-14 rounded-2xl ${s.iconBg} flex items-center justify-center mb-5 shadow-md group-hover:scale-110 transition-transform duration-300`}
+                >
+                  <s.icon className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="font-serif text-lg font-semibold mb-2">{s.title}</h3>
-                <p className="text-muted-foreground text-sm line-clamp-2">{s.description}</p>
+                <h3 className="font-extrabold text-[#0A2558] text-base mb-2 group-hover:text-[#14B8A6] transition-colors duration-300">
+                  {s.title}
+                </h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{s.desc}</p>
+                <div className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#14B8A6] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Learn more <ArrowRight className="h-3 w-3" />
+                </div>
               </motion.div>
             ))}
           </div>
-          <div className="text-center mt-10">
+          <div className="text-center mt-12">
             <Link to="/services">
-              <Button variant="outline" size="lg">View All Services <ArrowRight className="ml-2 h-4 w-4" /></Button>
+              <button className="inline-flex items-center gap-2 bg-[#0A2558] hover:bg-[#0d2f6e] text-white font-bold px-8 py-3.5 rounded-xl transition-all duration-200">
+                View All Services <ArrowRight className="h-4 w-4" />
+              </button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20 bg-secondary">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">What Our Patients Say</h2>
+      {/* ── GALLERY ── */}
+      <section className="py-24 bg-[#F8FAFC] overflow-hidden">
+        <div className="w-full max-w-[1280px] mx-auto px-6 md:px-8 mb-14">
+          <div className="text-center">
+            <p className="text-[#14B8A6] font-bold uppercase tracking-[0.2em] text-sm mb-3">
+              Real Moments
+            </p>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[#0A2558] mb-4">
+              Our Home Visit Gallery
+            </h2>
+            <p className="text-slate-500 max-w-xl mx-auto text-lg">
+              Real moments of care, compassion and professional healthcare delivered at home.
+            </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((t, i) => (
-              <motion.div
-                key={t.name}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                custom={i}
-                variants={fadeUp}
-                className="bg-card rounded-xl p-8 shadow-card"
-              >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(t.rating)].map((_, j) => (
-                    <Star key={j} className="h-4 w-4 text-accent fill-accent" />
-                  ))}
+        </div>
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          spaceBetween={20}
+          slidesPerView="auto"
+          centeredSlides
+          loop
+          speed={600}
+          autoplay={{ delay: 2800, disableOnInteraction: false, pauseOnMouseEnter: true }}
+          pagination={{ clickable: true }}
+          className="gallery-swiper pb-12"
+        >
+          {[gallery1, gallery2, gallery3, gallery4, gallery5, gallery6,
+            gallery1, gallery2, gallery3, gallery4, gallery5, gallery6].map((img, i) => (
+            <SwiperSlide key={i} style={{ width: "360px", maxWidth: "80vw" }}>
+              <div className="rounded-[24px] overflow-hidden shadow-xl" style={{ height: "260px" }}>
+                <img src={img} alt="Doctor At Home" className="w-full h-full object-cover" />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </section>
+
+      {/* ── TESTIMONIALS ── */}
+      <section className="py-24 bg-white overflow-hidden">
+        <div className="w-full max-w-[1280px] mx-auto px-6 md:px-8">
+          <div className="text-center mb-14">
+            <p className="text-[#14B8A6] font-bold uppercase tracking-[0.2em] text-sm mb-3">
+              Patient Testimonials
+            </p>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[#0A2558] mb-4">
+              Trusted by Families Across Bhopal
+            </h2>
+            <p className="text-slate-500 max-w-xl mx-auto text-lg">
+              Real stories from real patients who experienced care at home.
+            </p>
+          </div>
+          <div
+            className="relative overflow-hidden group"
+            style={{
+              maskImage:
+                "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+            }}
+          >
+            <div
+              className="flex gap-5 group-hover:[animation-play-state:paused]"
+              style={{ animation: "marqueeScroll 40s linear infinite", width: "max-content" }}
+            >
+              {[...testimonials, ...testimonials].map((t, i) => (
+                <div
+                  key={i}
+                  className="w-[320px] flex-shrink-0 flex flex-col rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300"
+                  style={{ background: "#F8FAFC", minHeight: "200px" }}
+                >
+                  <div className="flex gap-0.5 mb-3">
+                    {[...Array(t.rating)].map((_, j) => (
+                      <Star key={j} className="h-3.5 w-3.5 text-yellow-500 fill-yellow-500" />
+                    ))}
+                  </div>
+                  <p className="text-slate-600 text-xs leading-relaxed flex-1">"{t.text}"</p>
+                  <div className="flex items-center gap-2.5 pt-3 mt-3 border-t border-slate-100">
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
+                      style={{ background: "linear-gradient(135deg, #0A2558, #14B8A6)" }}
+                    >
+                      {t.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-bold text-[#0A2558] text-xs">{t.name}</p>
+                      <p className="text-slate-400 text-[10px]">{t.location}</p>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-muted-foreground text-sm mb-4 italic">"{t.text}"</p>
-                <p className="font-semibold text-sm">{t.name}</p>
-              </motion.div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Emergency Banner */}
-      <section className="bg-gradient-hero py-10">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-          <div>
-            <h3 className="font-serif text-2xl font-bold text-primary-foreground mb-2">Need Urgent Care?</h3>
-            <p className="text-primary-foreground/80">Our emergency homecare team is available 24/7. Call us now.</p>
-          </div>
-          <div className="flex gap-4">
-            <a href="tel:+919203634407">
-              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
-                <Phone className="mr-2 h-4 w-4" /> Call Emergency
-              </Button>
-            </a>
-            <a href="https://wa.me/919203634407" target="_blank" rel="noopener noreferrer">
-              <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground bg-primary-foreground/10">
-                WhatsApp
-              </Button>
-            </a>
-          </div>
+      {/* ── EMERGENCY CTA ── */}
+      <section
+        className="py-6 relative overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #071B45 0%, #0A2558 55%, #0e3272 100%)",
+        }}
+      >
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div
+            className="absolute w-[400px] h-[400px] rounded-full blur-3xl opacity-[0.10]"
+            style={{
+              background: "radial-gradient(circle, #14B8A6, transparent)",
+              top: "-150px",
+              right: "-80px",
+            }}
+          />
+        </div>
+        <div className="w-full max-w-[1280px] mx-auto px-6 md:px-8 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col md:flex-row items-center justify-between gap-6"
+          >
+            <div className="text-center md:text-left">
+              <h3 className="text-xl md:text-2xl font-extrabold text-white mb-1">
+                Need Urgent Care?
+              </h3>
+              <p className="text-white/60 text-sm md:text-base">
+                Our emergency homecare team is available 24/7. Call us now.
+              </p>
+            </div>
+            <div className="flex gap-3 flex-shrink-0">
+              <a href="tel:+919203634407">
+                <button
+                  className="inline-flex items-center gap-2 font-bold text-sm px-6 py-3 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95"
+                  style={{
+                    background: "#EF4444",
+                    color: "#fff",
+                    boxShadow: "0 4px 16px rgba(239,68,68,0.35)",
+                  }}
+                >
+                  <Phone className="h-4 w-4" /> Call Emergency
+                </button>
+              </a>
+              <a href="https://wa.me/919203634407" target="_blank" rel="noopener noreferrer">
+                <button
+                  className="inline-flex items-center gap-2 font-bold text-sm px-6 py-3 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95"
+                  style={{
+                    background: "#25D366",
+                    color: "#fff",
+                    boxShadow: "0 4px 16px rgba(37,211,102,0.3)",
+                  }}
+                >
+                  <MessageCircle className="h-4 w-4" /> WhatsApp
+                </button>
+              </a>
+            </div>
+          </motion.div>
         </div>
       </section>
+
+      <style>{`
+        @keyframes marqueeScroll {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .gallery-swiper .swiper-pagination-bullet {
+          background: #0A2558; opacity: 0.25; width: 8px; height: 8px;
+        }
+        .gallery-swiper .swiper-pagination-bullet-active {
+          background: #14B8A6; opacity: 1; width: 24px;
+          border-radius: 4px; transition: width 0.3s ease;
+        }
+      `}</style>
+
     </Layout>
   );
 };

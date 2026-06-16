@@ -341,6 +341,7 @@ padding:40px 20px;
       to: [
       "deelipparihar2405@gmail.com",
       "doctorathome@gmail.com",
+      "mohitgurjar2369@gmail.com",
       "priyanshuchouhan342@gmail.com"
     ],
         subject: `🩺 New Appointment - ${data.patient_name}`,

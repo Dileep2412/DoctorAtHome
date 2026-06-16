@@ -338,7 +338,11 @@ padding:40px 20px;
 
     await supabase.functions.invoke("send-email", {
       body: {
-        to: "deelipparihar2405@gmail.com", // apni admin email likho
+      to: [
+      "deelipparihar2405@gmail.com",
+      "doctorathome@gmail.com",
+      "priyanshuchouhan342@gmail.com"
+    ],
         subject: `🩺 New Appointment - ${data.patient_name}`,
       html: `
 <div style="

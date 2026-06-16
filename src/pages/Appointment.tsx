@@ -81,6 +81,8 @@ const Appointment = () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
 
+    console.log("USER =", user);
+
     if (!user) {
       localStorage.setItem("appointment_form", JSON.stringify(data));
       localStorage.setItem("redirect_after_login", "/appointment");
@@ -109,6 +111,492 @@ const Appointment = () => {
       toast({ variant: "destructive", title: "Error", description: "Failed to submit. Please try again." });
       return;
     }
+   
+    const response = await supabase.functions.invoke("send-email", {
+      body: {
+        to: user.email,
+        subject: "Appointment Request Received | Doctor At Home",
+        html: `
+<div style="
+max-width:600px;
+margin:auto;
+font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+background:#F4F7FB;
+padding:40px 20px;
+">
+
+  <div style="
+  background:#fff;
+  border-radius:28px;
+  overflow:hidden;
+  box-shadow:
+    0 20px 50px rgba(10,37,88,0.10),
+    0 4px 20px rgba(10,37,88,0.06);
+  ">
+
+    <!-- Header -->
+
+    <div style="
+    background:linear-gradient(135deg,#0A2558,#0EA5E9);
+    padding:42px;
+    text-align:center;
+    ">
+
+      <div style="
+      width:75px;
+      height:75px;
+      margin:auto;
+      border-radius:22px;
+      background:rgba(255,255,255,0.15);
+      line-height:75px;
+      font-size:34px;
+      ">
+      🩺
+      </div>
+
+      <h1 style="
+      color:#fff;
+      margin:24px 0 8px;
+      font-size:32px;
+      font-weight:800;
+      ">
+        Doctor At Home
+      </h1>
+
+      <p style="
+      color:rgba(255,255,255,0.85);
+      margin:0;
+      font-size:15px;
+      ">
+        Healthcare at Your Doorstep
+      </p>
+
+    </div>
+
+    <!-- Body -->
+
+    <div style="padding:40px;">
+
+      <h2 style="
+      color:#0A2558;
+      margin-top:0;
+      font-size:28px;
+      ">
+        Hello ${data.patient_name} 👋
+      </h2>
+
+      <p style="
+      color:#475569;
+      line-height:1.8;
+      font-size:16px;
+      ">
+        Thank you for choosing
+        <b>Doctor At Home</b>
+        for your healthcare needs.
+      </p>
+
+      <p style="
+      color:#475569;
+      line-height:1.8;
+      font-size:16px;
+      ">
+        Your appointment request has been received successfully and our team is reviewing it.
+      </p>
+
+      <!-- Appointment Card -->
+
+      <div style="
+      background:#F8FAFC;
+      border:1px solid #E2E8F0;
+      border-radius:22px;
+      padding:28px;
+      margin:35px 0;
+      ">
+
+        <h3 style="
+        margin-top:0;
+        color:#0A2558;
+        font-size:22px;
+        ">
+          Appointment Details
+        </h3>
+
+        <p style="font-size:16px">
+          <b>🩺 Service:</b>
+          ${data.service}
+        </p>
+
+        <p style="font-size:16px">
+          <b>📅 Date:</b>
+          ${data.date}
+        </p>
+
+        <p style="font-size:16px">
+          <b>⏰ Time:</b>
+          ${data.time}
+        </p>
+
+      </div>
+
+      <!-- Success Box -->
+
+      <div style="
+      background:#ECFDF5;
+      border-left:5px solid #14B8A6;
+      padding:22px;
+      border-radius:16px;
+      ">
+
+        <p style="
+        margin:0;
+        color:#065F46;
+        font-weight:700;
+        font-size:17px;
+        ">
+          ✅ Thank you for choosing Doctor At Home
+        </p>
+
+        <p style="
+        margin-top:10px;
+        color:#065F46;
+        line-height:1.7;
+        ">
+          Our team will contact you shortly to confirm your appointment and ensure you receive the best care possible.
+        </p>
+
+      </div>
+
+      <!-- Button -->
+
+      <div style="
+      text-align:center;
+      margin-top:36px;
+      ">
+
+        <a
+        href="tel:9203634407"
+        style="
+        display:inline-block;
+        background:#0A2558;
+        color:white;
+        text-decoration:none;
+        padding:15px 32px;
+        border-radius:14px;
+        font-weight:700;
+        ">
+        📞 Call Us
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+
+    <div style="
+    background:#F8FAFC;
+    text-align:center;
+    padding:30px;
+    ">
+
+      <div style="
+      font-size:20px;
+      font-weight:700;
+      color:#0A2558;
+      ">
+        Doctor At Home
+      </div>
+
+      <div style="
+      color:#94A3B8;
+      margin-top:8px;
+      ">
+        Healthcare at Your Doorstep
+      </div>
+
+      <div style="
+      margin-top:18px;
+      color:#CBD5E1;
+      font-size:13px;
+      ">
+        📞 9203634407
+
+        <br><br>
+
+        Thank you for trusting us with your healthcare ❤️
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+`
+
+      },
+    });
+
+    await supabase.functions.invoke("send-email", {
+      body: {
+        to: "deelipparihar2405@gmail.com", // apni admin email likho
+        subject: `🩺 New Appointment - ${data.patient_name}`,
+      html: `
+<div style="
+max-width:650px;
+margin:auto;
+font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+background:#F4F7FB;
+padding:40px 20px;
+">
+
+  <!-- Main Card -->
+
+  <div style="
+  background:#ffffff;
+  border-radius:28px;
+  overflow:hidden;
+  box-shadow:
+    0 20px 50px rgba(10,37,88,0.10),
+    0 4px 20px rgba(10,37,88,0.06);
+  ">
+
+    <!-- Header -->
+
+    <div style="
+    background:linear-gradient(135deg,#0A2558,#0EA5E9);
+    padding:40px;
+    text-align:center;
+    ">
+
+      <div style="
+      width:70px;
+      height:70px;
+      margin:auto;
+      border-radius:20px;
+      background:rgba(255,255,255,0.15);
+      line-height:70px;
+      font-size:34px;
+      ">
+        🩺
+      </div>
+
+      <h1 style="
+      color:white;
+      margin:22px 0 8px;
+      font-size:30px;
+      font-weight:800;
+      ">
+        New Appointment Received
+      </h1>
+
+      <p style="
+      color:rgba(255,255,255,0.8);
+      margin:0;
+      font-size:15px;
+      ">
+        Doctor At Home • Admin Notification
+      </p>
+
+    </div>
+
+    <!-- Body -->
+
+    <div style="padding:40px;">
+
+      <p style="
+      color:#64748B;
+      font-size:15px;
+      margin-bottom:24px;
+      ">
+      A new patient has booked an appointment.
+      </p>
+
+      <!-- Patient Card -->
+
+      <div style="
+      background:#F8FAFC;
+      border:1px solid #E2E8F0;
+      border-radius:22px;
+      padding:28px;
+      ">
+
+        <div style="margin-bottom:18px;">
+          <div style="font-size:13px;color:#94A3B8;">Patient Name</div>
+
+          <div style="
+          font-size:24px;
+          font-weight:700;
+          color:#0F172A;
+          margin-top:6px;
+          ">
+            👤 ${data.patient_name}
+          </div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid #E2E8F0;">
+
+        <div style="padding:18px 0;">
+          <b>📞 Phone:</b>
+          <span style="color:#334155">
+            ${data.phone}
+          </span>
+        </div>
+
+        <hr style="border:none;border-top:1px solid #E2E8F0;">
+
+        <div style="padding:18px 0;">
+          <b>🩺 Service:</b>
+          <span style="color:#334155">
+            ${data.service}
+          </span>
+        </div>
+
+        <hr style="border:none;border-top:1px solid #E2E8F0;">
+
+        <div style="padding:18px 0;">
+          <b>📅 Appointment Date:</b>
+          <span style="color:#334155">
+            ${data.date}
+          </span>
+        </div>
+
+        <hr style="border:none;border-top:1px solid #E2E8F0;">
+
+        <div style="padding:18px 0;">
+          <b>⏰ Time:</b>
+          <span style="color:#334155">
+            ${data.time}
+          </span>
+        </div>
+
+        <hr style="border:none;border-top:1px solid #E2E8F0;">
+
+        <div style="padding-top:18px;">
+
+          <div style="
+          font-size:13px;
+          color:#94A3B8;
+          margin-bottom:10px;
+          ">
+            Address
+          </div>
+
+          <div style="
+          background:white;
+          padding:18px;
+          border-radius:14px;
+          border:1px solid #E2E8F0;
+          color:#334155;
+          line-height:1.7;
+          ">
+            ${data.address}
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Buttons -->
+
+      <div style="
+      text-align:center;
+      margin-top:35px;
+      ">
+
+        <a
+        href="tel:${data.phone}"
+        style="
+        display:inline-block;
+        background:#0A2558;
+        color:white;
+        text-decoration:none;
+        padding:14px 24px;
+        border-radius:14px;
+        font-weight:700;
+        margin:8px;
+        ">
+        📞 Call Patient
+        </a>
+
+        <a
+        href="https://wa.me/91${data.phone}"
+        style="
+        display:inline-block;
+        background:#25D366;
+        color:white;
+        text-decoration:none;
+        padding:14px 24px;
+        border-radius:14px;
+        font-weight:700;
+        margin:8px;
+        ">
+        💬 WhatsApp
+        </a>
+
+        <a
+        href="${data.google_maps_link}"
+        style="
+        display:inline-block;
+        background:#0EA5E9;
+        color:white;
+        text-decoration:none;
+        padding:14px 24px;
+        border-radius:14px;
+        font-weight:700;
+        margin:8px;
+        ">
+        📍 Open Maps
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+
+    <div style="
+    background:#F8FAFC;
+    text-align:center;
+    padding:28px;
+    ">
+
+      <div style="
+      font-size:18px;
+      font-weight:700;
+      color:#0A2558;
+      ">
+        Doctor At Home
+      </div>
+
+      <div style="
+      color:#94A3B8;
+      margin-top:8px;
+      font-size:14px;
+      ">
+        Healthcare at Your Doorstep
+      </div>
+
+      <div style="
+      margin-top:18px;
+      color:#CBD5E1;
+      font-size:12px;
+      ">
+        This is an automated notification email.
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+`
+      },
+    });
+
+
+console.log("EMAIL RESPONSE =", response);
+
+
     setSubmitted(true);
   };
 

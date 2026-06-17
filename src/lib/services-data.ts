@@ -1,4 +1,4 @@
-import { Stethoscope, UserPlus, Syringe, Activity, HeartHandshake, Pill } from "lucide-react";
+import { Stethoscope, UserPlus, HeartHandshake, Activity, Microscope, Dumbbell, FlaskConical, Pill } from "lucide-react";
 
 export const services = [
   {
@@ -8,31 +8,43 @@ export const services = [
     icon: Stethoscope,
   },
   {
+    title: "Elder Care",
+    description:
+      "Dedicated care for senior citizens including health monitoring, medication assistance, mobility support, and regular checkups at home.",
+    icon: HeartHandshake,
+  },
+  {
     title: "Nursing Care",
     description:
       "Trained nurses provide professional care at home including wound dressing, post-surgery support, monitoring vital signs, and patient assistance.",
     icon: UserPlus,
   },
   {
-    title: "Injection / IV Drip",
+    title: "Post Operative Care",
     description:
-      "Safe administration of injections and IV drips at home by certified medical professionals, ensuring comfort and proper medical supervision.",
-    icon: Syringe,
-  },
-  {
-    title: "ECG & Lab Test at Home",
-    description:
-      "Convenient diagnostic services including ECG, blood tests, and other lab investigations conducted at your home with reliable results.",
+      "Specialized post-surgery care at home including wound management, medication administration, and recovery monitoring by trained medical professionals.",
     icon: Activity,
   },
   {
-    title: "Elderly Care",
+    title: "ECG & X-Ray at Home",
     description:
-      "Dedicated care for senior citizens including health monitoring, medication assistance, mobility support, and regular checkups at home.",
-    icon: HeartHandshake,
+      "Convenient diagnostic services including ECG and X-Ray conducted at your home with reliable results and quick turnaround.",
+    icon: Microscope,
   },
   {
-    title: "Medicine Delivery",
+    title: "Physiotherapy Care",
+    description:
+      "Expert physiotherapists provide rehabilitation sessions at home for pain relief, injury recovery, and improved mobility.",
+    icon: Dumbbell,
+  },
+  {
+    title: "Lab Tests at Home",
+    description:
+      "Blood tests and other lab investigations conducted at your doorstep with accurate results delivered quickly.",
+    icon: FlaskConical,
+  },
+  {
+    title: "Medicine Delivery at Home",
     description:
       "Fast and reliable delivery of prescribed medicines directly to your doorstep, ensuring you never miss an essential medication.",
     icon: Pill,

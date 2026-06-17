@@ -5,7 +5,7 @@ import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CalendarDays, Clock, Stethoscope, User, PlusCircle, Inbox } from "lucide-react";
+import { CalendarDays, Stethoscope, User, PlusCircle, Inbox } from "lucide-react";
 
 export default function MyAppointments() {
   const [user, setUser] = useState<any>(null);
@@ -240,16 +240,12 @@ export default function MyAppointments() {
                   <div style={{ height: 1, background: "#F1F5F9", marginBottom: 14 }} />
 
                   {/* Card details */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <CalendarDays size={14} color="#94A3B8" />
                       <span style={{ fontSize: 13, color: "#475569", fontWeight: 500 }}>{a.date}</span>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <Clock size={14} color="#94A3B8" />
-                      <span style={{ fontSize: 13, color: "#475569", fontWeight: 500 }}>{a.time}</span>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, gridColumn: "1 / -1" }}>
                       <User size={14} color="#94A3B8" />
                       <span style={{ fontSize: 13, color: a.assigned_doctor ? "#475569" : "#94A3B8", fontWeight: 500, fontStyle: a.assigned_doctor ? "normal" : "italic" }}>
                         {a.assigned_doctor || "Doctor not assigned yet"}

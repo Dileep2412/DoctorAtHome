@@ -20,17 +20,11 @@ const schema = z.object({
   phone: z.string().trim().min(7, "Valid phone required").max(20),
   service: z.string().min(1, "Select a service"),
   date: z.string().min(1, "Select a date"),
-  time: z.string().min(1, "Select a time"),
-  address: z.string().trim().min(5, "Address is required").max(500),
+  address: z.string().trim().max(500).optional(),
   google_maps_link: z.string().trim().min(5, "Google Maps location link is required").max(500),
 });
 
 type FormData = z.infer<typeof schema>;
-
-const timeSlots = [
-  "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
-  "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM",
-];
 
 const Appointment = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -43,7 +37,7 @@ const Appointment = () => {
     resolver: zodResolver(schema),
     defaultValues: {
       patient_name: "", phone: "", service: "",
-      date: "", time: "", address: "", google_maps_link: "",
+      date: "", address: "", google_maps_link: "",
     },
   });
 
@@ -100,8 +94,7 @@ const Appointment = () => {
         phone: data.phone,
         service: data.service,
         date: data.date,
-        time: data.time,
-        address: data.address,
+        address: data.address || null,
         google_maps_link: data.google_maps_link,
       },
     ]);
@@ -231,11 +224,6 @@ padding:40px 20px;
           ${data.date}
         </p>
 
-        <p style="font-size:16px">
-          <b>⏰ Time:</b>
-          ${data.time}
-        </p>
-
       </div>
 
       <!-- Success Box -->
@@ -332,7 +320,6 @@ padding:40px 20px;
 
 </div>
 `
-
       },
     });
 
@@ -465,15 +452,7 @@ padding:40px 20px;
           </span>
         </div>
 
-        <hr style="border:none;border-top:1px solid #E2E8F0;">
-
-        <div style="padding:18px 0;">
-          <b>⏰ Time:</b>
-          <span style="color:#334155">
-            ${data.time}
-          </span>
-        </div>
-
+        ${data.address ? `
         <hr style="border:none;border-top:1px solid #E2E8F0;">
 
         <div style="padding-top:18px;">
@@ -498,6 +477,7 @@ padding:40px 20px;
           </div>
 
         </div>
+        ` : ""}
 
       </div>
 
@@ -598,9 +578,7 @@ padding:40px 20px;
       },
     });
 
-
-console.log("EMAIL RESPONSE =", response);
-
+    console.log("EMAIL RESPONSE =", response);
 
     setSubmitted(true);
   };
@@ -632,7 +610,6 @@ console.log("EMAIL RESPONSE =", response);
               width: "100%",
             }}
           >
-            {/* Animated checkmark */}
             <div style={{ position: "relative", width: 80, height: 80, margin: "0 auto 28px" }}>
               <div style={{
                 position: "absolute", inset: 0, borderRadius: "50%",
@@ -649,7 +626,6 @@ console.log("EMAIL RESPONSE =", response);
               </div>
             </div>
 
-            {/* Heading */}
             <h2 style={{ fontSize: "1.55rem", fontWeight: 800, color: "#0A2558", marginBottom: 8, letterSpacing: "-0.01em" }}>
               Request Received!
             </h2>
@@ -657,7 +633,6 @@ console.log("EMAIL RESPONSE =", response);
               Your appointment has been submitted. Our team will assign a doctor and contact you shortly.
             </p>
 
-            {/* Info lines with Lucide icons */}
             <div style={{
               background: "#F8FAFC", borderRadius: 12, border: "1px solid #E2E8F0",
               padding: "16px 20px", marginBottom: 24, textAlign: "left",
@@ -679,7 +654,6 @@ console.log("EMAIL RESPONSE =", response);
               ))}
             </div>
 
-            {/* Buttons */}
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <button
                 onClick={() => navigate("/my-appointments")}
@@ -695,7 +669,6 @@ console.log("EMAIL RESPONSE =", response);
                 View My Appointments →
               </button>
 
-              {/* WhatsApp button */}
               <a
                 href="https://wa.me/919203634407"
                 target="_blank"
@@ -730,7 +703,6 @@ console.log("EMAIL RESPONSE =", response);
               </button>
             </div>
 
-            {/* Help note */}
             <p style={{ fontSize: 12, color: "#B8C4D0", marginTop: 24 }}>
               Need help? Call us at{" "}
               <a href="tel:9203634407" style={{ color: "#0EA5E9", fontWeight: 600, textDecoration: "none" }}>
@@ -807,7 +779,7 @@ console.log("EMAIL RESPONSE =", response);
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div style={{ padding: "0 28px 28px", display: "flex", flexDirection: "column", gap: 18 }}>
 
-                  {/* Name + Phone — responsive grid via Tailwind */}
+                  {/* Name + Phone */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField control={form.control} name="patient_name" render={({ field }) => (
                       <FormItem>
@@ -862,50 +834,30 @@ console.log("EMAIL RESPONSE =", response);
                     </FormItem>
                   )} />
 
-                  {/* Date + Time — responsive grid via Tailwind */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField control={form.control} name="date" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel style={labelSt}>Preferred date</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="date"
-                            min={new Date().toISOString().split("T")[0]}
-                            className="focus-visible:ring-[#0EA5E9] focus-visible:border-[#0EA5E9]"
-                            style={inputSt}
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
-                    <FormField control={form.control} name="time" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel style={labelSt}>Preferred time</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger
-                              style={inputSt}
-                              className="focus:ring-[#0EA5E9] focus:border-[#0EA5E9] data-[placeholder]:text-[#C8D4DE]"
-                            >
-                              <SelectValue placeholder="Select a time slot" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {timeSlots.map((t) => (
-                              <SelectItem key={t} value={t}>{t}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
-                  </div>
+                  {/* Date only (time removed) */}
+                  <FormField control={form.control} name="date" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel style={labelSt}>Preferred date</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          min={new Date().toISOString().split("T")[0]}
+                          className="focus-visible:ring-[#0EA5E9] focus-visible:border-[#0EA5E9]"
+                          style={inputSt}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
 
-                  {/* Address */}
+                  {/* Address — optional */}
                   <FormField control={form.control} name="address" render={({ field }) => (
                     <FormItem>
-                      <FormLabel style={labelSt}>Home address</FormLabel>
+                      <FormLabel style={labelSt}>
+                        Home address{" "}
+                        <span style={{ fontSize: 11, color: "#94A3B8", fontWeight: 400 }}>(optional)</span>
+                      </FormLabel>
                       <FormControl>
                         <Textarea
                           className="focus-visible:ring-[#0EA5E9] focus-visible:border-[#0EA5E9] placeholder:text-[#C8D4DE]"

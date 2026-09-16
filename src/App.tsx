@@ -12,6 +12,7 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import MyAppointments from "./pages/MyAppointments";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -28,9 +29,10 @@ const App = () => (
           <Route path="/appointment" element={<Appointment />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin" element={<Admin />} />
-          <Route path="*" element={<NotFound />} />
           <Route path="/login" element={<Login />} />
           <Route path="/my-appointments" element={<MyAppointments />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

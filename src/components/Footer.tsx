@@ -96,8 +96,8 @@ const Footer = () => {
                   <MapPin className="h-3.5 w-3.5" />
                 </div>
                 <span>
-                  Shop no. 1, Chandan Nagar,<br />
-                  Bhopal, Madhya Pradesh
+                  Bhopal Hospital and Research Center,<br />
+                  Shree Ram Colony, Hoshangabad Road, Bhopal
                 </span>
               </div>
 
@@ -107,8 +107,19 @@ const Footer = () => {
                   <MapPin className="h-3.5 w-3.5" />
                 </div>
                 <span>
-                  MP Nagar,<br />
+                  MP Nagar Zone 2,<br />
                   Bhopal, Madhya Pradesh
+                </span>
+              </div>
+
+              {/* Address 3 */}
+              <div className="flex items-start gap-3 text-sm text-white/60">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <MapPin className="h-3.5 w-3.5" />
+                </div>
+                <span>
+                  Shubh Business Zone,<br />
+                  Ayodhya Bypass, Bhopal
                 </span>
               </div>
 
@@ -120,10 +131,23 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
-        <div className="w-full max-w-[1280px] mx-auto px-6 md:px-8 py-5 text-center text-xs text-white/40">
-          © {new Date().getFullYear()} DoctorAtHome. All rights reserved.
+        <div className="w-full max-w-[1280px] mx-auto px-6 md:px-8 py-5 flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-3 text-xs text-white/40">
+          <div className="flex items-center gap-4 flex-wrap justify-center">
+            <Link to="/privacy-policy" className="hover:text-white/70 transition-colors">Privacy Policy</Link>
+            <span className="text-white/20">·</span>
+            <Link to="/terms-of-service" className="hover:text-white/70 transition-colors">Terms of Service</Link>
+            <span className="text-white/20">·</span>
+            <Link to="/refund-policy" className="hover:text-white/70 transition-colors">Refund Policy</Link>
+            <span className="text-white/20">·</span>
+            <Link to="/admin" className="text-white/25 hover:text-white/60 transition-colors">Admin Login</Link>
+          </div>
+          <span>© {new Date().getFullYear()} DoctorAtHome. All rights reserved.</span>
         </div>
       </div>
+
+      {/* Spacer for the mobile fixed Call/WhatsApp bar — Footer is always the last element on every page,
+          so this is the correct place to reserve space, not the end of any individual page's content. */}
+      <div className="md:hidden" style={{ height: "calc(96px + env(safe-area-inset-bottom, 0px))" }} />
     </footer>
   );
 };

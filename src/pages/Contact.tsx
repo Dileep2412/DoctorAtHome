@@ -98,7 +98,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">Address</p>
-                  <p className="text-[#0A2558] font-bold text-sm leading-snug">Shop No. 1, Chandan Nagar,<br />Bhopal, Madhya Pradesh</p>
+                  <p className="text-[#0A2558] font-bold text-sm leading-snug">Shubh Business Zone,<br />Ayodhya Bypass, Bhopal</p>
                 </div>
               </motion.a>
 

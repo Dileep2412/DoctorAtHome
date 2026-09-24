@@ -8,10 +8,11 @@ import Services from "./pages/Services";
 import Doctors from "./pages/Doctors";
 import Appointment from "./pages/Appointment";
 import Contact from "./pages/Contact";
-import Admin from "./pages/Admin";
+import AdminCRM from "./pages/admin/AdminCRM";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import MyAppointments from "./pages/MyAppointments";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -27,10 +28,11 @@ const App = () => (
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/appointment" element={<Appointment />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/admin" element={<AdminCRM />} />
           <Route path="/login" element={<Login />} />
           <Route path="/my-appointments" element={<MyAppointments />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

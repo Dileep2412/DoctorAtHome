@@ -834,7 +834,7 @@ const Index = () => {
                 className="flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-bold text-sm bg-white"
                 style={{ color: "#0A2558" }}
               >
-                <Phone className="h-4 w-4" style={{ color: "#14B8A6" }} /> Call Clinic
+                <Phone className="h-4 w-4" style={{ color: "#14B8A6" }} /> Call Now
               </a>
               <Link
                 to="/appointment"

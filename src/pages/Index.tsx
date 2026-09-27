@@ -419,10 +419,10 @@ const Index = () => {
             <div key={dup} className="flex items-center gap-10">
               {[
                 "★ 4.9/5 Google Rating",
-                "🏠 500+ Home Visits Completed",
+                "🏠 300+ Home Visits Completed",
                 "👨‍⚕️ Certified & Verified Doctors",
                 "🚑 24×7 Emergency Support",
-                "⏱ Under 2hr Response Time",
+                "⏱ Under 30min Response Time",
               ].map((item) => (
                 <span key={item} className="text-white text-sm sm:text-base font-bold tracking-wide flex items-center gap-3">
                   {item}

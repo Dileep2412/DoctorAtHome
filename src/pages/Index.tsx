@@ -89,8 +89,8 @@ const GoogleGIcon = ({ className = "h-4 w-4" }: { className?: string }) => (
   </svg>
 );
 
-const GOOGLE_RATING = "4.9";
-const GOOGLE_REVIEW_COUNT = 120;
+const GOOGLE_RATING = "4.8";
+const GOOGLE_REVIEW_COUNT = 131;
 // TODO: replace with the exact Google Maps / Business place link
 const GOOGLE_REVIEWS_URL = "https://www.google.com/search?q=Doctor+At+Home+Bhopal+reviews";
 
@@ -110,7 +110,7 @@ const testimonials = [
 const whyUs = [
   { icon: Users,  title: "Experienced Doctors",  desc: "Board-certified doctors with years of home visit expertise.", badge: "Verified",    stat: "Certified doctors",  glowColor: "#3b82f6", iconBg: "rgba(59,130,246,0.1)",  iconColor: "#2563eb", badgeBg: "rgba(59,130,246,0.08)",  badgeColor: "#1d4ed8", badgeBorder: "rgba(59,130,246,0.2)"  },
   { icon: Clock,  title: "24/7 Availability",    desc: "Round-the-clock support and emergency services, anytime.",  badge: "Always On",  stat: "Never closed",       glowColor: "#14b8a6", iconBg: "rgba(20,184,166,0.1)",  iconColor: "#0d9488", badgeBg: "rgba(20,184,166,0.08)",  badgeColor: "#0f766e", badgeBorder: "rgba(20,184,166,0.2)"  },
-  { icon: Zap,    title: "Fast Response",         desc: "Doctor at your doorstep within 2 hours of booking.",       badge: "Fast",       stat: "2hr guarantee",      glowColor: "#f97316", iconBg: "rgba(249,115,22,0.1)",  iconColor: "#ea580c", badgeBg: "rgba(249,115,22,0.08)",  badgeColor: "#c2410c", badgeBorder: "rgba(249,115,22,0.2)"  },
+  { icon: Zap,    title: "Fast Response",         desc: "Doctor at your doorstep within 30 minutes of booking.",       badge: "Fast",       stat: "2hr guarantee",      glowColor: "#f97316", iconBg: "rgba(249,115,22,0.1)",  iconColor: "#ea580c", badgeBg: "rgba(249,115,22,0.08)",  badgeColor: "#c2410c", badgeBorder: "rgba(249,115,22,0.2)"  },
   { icon: Heart,  title: "Affordable Care",       desc: "Transparent pricing with zero hidden charges.",             badge: "Affordable", stat: "No hidden fees",     glowColor: "#ec4899", iconBg: "rgba(236,72,153,0.1)",  iconColor: "#db2777", badgeBg: "rgba(236,72,153,0.08)",  badgeColor: "#be185d", badgeBorder: "rgba(236,72,153,0.2)"  },
   { icon: Home,   title: "Home Comfort",          desc: "Recover stress-free in your own comfortable space.",        glowColor: "#8b5cf6", iconBg: "rgba(139,92,246,0.1)", iconColor: "#7c3aed", badge: "At Home", badgeBg: "rgba(139,92,246,0.08)",  badgeColor: "#6d28d9", badgeBorder: "rgba(139,92,246,0.2)"  },
   { icon: Shield, title: "Trusted by Families",   desc: "Thousands of families in Bhopal rely on us daily.",        badge: "Trusted",    stat: "5★ rated service",   glowColor: "#10b981", iconBg: "rgba(16,185,129,0.1)", iconColor: "#059669", badgeBg: "rgba(16,185,129,0.08)",  badgeColor: "#047857", badgeBorder: "rgba(16,185,129,0.2)"  },
@@ -418,11 +418,11 @@ const Index = () => {
           {Array.from({ length: 2 }).map((_, dup) => (
             <div key={dup} className="flex items-center gap-10">
               {[
-                "★ 4.9/5 Google Rating",
-                "🏠 500+ Home Visits Completed",
+                "★ 4.8/5 Google Rating",
+                "🏠 300+ Home Visits Completed",
                 "👨‍⚕️ Certified & Verified Doctors",
                 "🚑 24×7 Emergency Support",
-                "⏱ Under 2hr Response Time",
+                "⏱ Under 30min Response Time",
               ].map((item) => (
                 <span key={item} className="text-white text-sm sm:text-base font-bold tracking-wide flex items-center gap-3">
                   {item}
